@@ -3,6 +3,7 @@
 import glob, os, subprocess, sys
 
 REPO_URL = 'https://github.com/fasihh/bigthing'      # the JF/ folder holds this project
+BRANCH = 'jf-experiments'                           # used only until JF/ is merged into main
 
 
 def find_jf():
@@ -14,6 +15,9 @@ def find_jf():
     dest = '/kaggle/working/bigthing' if os.path.isdir('/kaggle/working') else os.path.abspath('bigthing')
     if not os.path.isdir(dest):
         subprocess.run(['git', 'clone', '--depth', '1', REPO_URL, dest], check=True)   # needs Internet on
+    if not os.path.isdir(os.path.join(dest, 'JF')):      # JF not merged into main yet: use its branch
+        subprocess.run(['git', '-C', dest, 'fetch', '--depth', '1', 'origin', BRANCH], check=True)
+        subprocess.run(['git', '-C', dest, 'checkout', '-q', 'FETCH_HEAD'], check=True)
     return os.path.join(dest, 'JF')
 
 
