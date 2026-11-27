@@ -240,7 +240,7 @@ def find_ckpt(name):
 def pretrain_or_load(obj, mods, group, seed, c, diag_rows=None):
     """Returns experts, target, target marginal. Looks in this run's ckpt folder and in every attached
     Kaggle input (e.g. the output of 01_pretrain_experts) before training."""
-    name = f'experts_{group}_{obj}_s{seed}.pt'
+    name = f'v2_experts_{group}_{obj}_s{seed}.pt'   # v2: never confused with run-1 checkpoints
     path = find_ckpt(name)
     if path:
         ck = torch.load(path, map_location=RT.DEV)

@@ -65,7 +65,7 @@ def resume_from(src_root):
 
 def build_model(experts0, obj, rg, fk, mods, c, seed, marginal, pgroup):
     """Stage 2 for one (objective, regime, fusion): load a saved model if one exists, else train it."""
-    name = f'model_{pgroup}_{obj}_{rg}_{fk}_s{seed}.pt'
+    name = f'v2_model_{pgroup}_{obj}_{rg}_{fk}_s{seed}.pt'
     if obj == 'none':
         set_seed(seed)
         experts = make_experts(mods, c, 'none').to(RT.DEV)
