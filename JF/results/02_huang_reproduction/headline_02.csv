@@ -1,0 +1,15 @@
+question,number
+"Signal R² at scale 8, VAE (new seeds)",median -0.498 · mean -1.231 ± 2.003 · worst seed -6.334
+"Signal R² at scale 8, AR (new seeds)",median -0.156 · mean -0.899 ± 1.763 · worst seed -5.610
+"Signal R² at scale 8, JEPA (new seeds)",median 0.679 · mean 0.599 ± 0.312 · worst seed -0.153
+"Signal R² at scale 8, VJEPA (new seeds)",median 0.459 · mean -0.150 ± 2.106 · worst seed -6.435
+"Signal R² at scale 8, BJEPA (new seeds)",median 0.458 · mean 0.194 ± 0.686 · worst seed -1.473
+"Signal R² at scale 8, VAE (author seeds, rerun)",median 0.009 · mean -0.226 ± 0.846 · worst seed -1.874
+"Signal R² at scale 8, AR (author seeds, rerun)",median 0.110 · mean 0.118 ± 0.352 · worst seed -0.490
+"Signal R² at scale 8, JEPA (author seeds, rerun)",median 0.693 · mean 0.749 ± 0.084 · worst seed 0.660
+"Signal R² at scale 8, VJEPA (author seeds, rerun)",median 0.563 · mean 0.566 ± 0.224 · worst seed 0.202
+"Signal R² at scale 8, BJEPA (author seeds, rerun)",median 0.176 · mean 0.077 ± 0.340 · worst seed -0.574
+VJEPA beats VAE on signal R² at scale 8 (new seeds),9/10 seeds
+VJEPA beats AR on signal R² at scale 8 (new seeds),9/10 seeds
+VJEPA beats JEPA on signal R² at scale 8 (new seeds),3/10 seeds
+VJEPA beats BJEPA on signal R² at scale 8 (new seeds),6/10 seeds

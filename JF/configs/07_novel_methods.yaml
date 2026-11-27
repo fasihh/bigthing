@@ -1,0 +1,13 @@
+# 07: this project's novel methods vs the best baselines, same seeds and conditions.
+seeds: [0, 1, 2]
+objectives: [vjepa, vjepa_vt, vjepa_vts, vjepa_pe, sjepa]
+frozen: [poe, dapoe, rpoe, rdapoe, mpoe, moe, monig]
+finetuned: [poe, dapoe, rpoe]
+text_drops: [0.5, 0.9]
+noise_lambdas: [0.5, 1.0]
+me_K: 8
+nc_objectives: [vjepa, vjepa_vt, vjepa_pe]
+nc_fusions: [poe, mpoe, dapoe, rpoe]
+dist_objectives: [vjepa, vjepa_vt, vjepa_pe, sjepa]
+dist_pattern: TAV_shared
+dist_sigma: 8.0

@@ -1,0 +1,7 @@
+# 04: corrupted (Noisy TV A) and mismatched (Noisy TV C) modalities at test time. Reuses 03's models if attached.
+seeds: [0, 1, 2]
+objectives: [vjepa, sjepa, recon, align, none]
+frozen: [concat, late_avg, moe, attn, poe, poe_pc, monig]
+finetuned: [concat, moe, attn, poe, monig]
+supervised: [concat, moe, attn, poe, monig]
+noise_lambdas: [0.25, 0.5, 0.75, 1.0]
