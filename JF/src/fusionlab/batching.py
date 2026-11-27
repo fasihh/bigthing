@@ -116,11 +116,11 @@ def noise_conditions(mods, lambdas):
     return out
 
 
-def swap_conditions(mods):
-    """Noisy TV C: audio and/or video taken from another random clip (one fixed shuffle)."""
+def swap_conditions(mods, subsets=(('a',), ('v',), ('a', 'v'))):
+    """Noisy TV C: the listed modalities taken from another random clip (one fixed shuffle)."""
     full = _code(mods, BASE)
     return [dict(kind='swap', name=f'swap[{"".join(NAMES[m] for m in sub)}]', avail=full, swap=sub,
-                 corrupted=''.join(NAMES[m] for m in sub)) for sub in (('a',), ('v',), ('a', 'v'))]
+                 corrupted=''.join(NAMES[m] for m in sub)) for sub in subsets]
 
 
 def conditions(mods, which, cfg):

@@ -173,9 +173,23 @@ def load_mosei(cfg, gdrive_url=''):
         arrs = build_arrays(pkl, cfg['max_len'], cfg['text_pca'])
         save_compact(arrs, os.path.join(cfg['out_dir'], COMPACT))
     meta = arrs.pop('meta', {})
-    data = {s: {k: torch.from_numpy(np.ascontiguousarray(v)) for k, v in d.items()} for s, d in arrs.items()}
-    attach(cfg, data)
     if 'pca_var_kept' in meta:
         print(f'text PCA keeps {float(meta["pca_var_kept"]):.1%} of BERT variance')
-    print({s: len(data[s]['y']) for s in data}, f'data ready in {time.time() - t0:.0f}s on {RT.DEV}')
+    return attach_arrays(cfg, arrs, t0)
+
+
+def attach_arrays(cfg, arrs, t0=None):
+    data = {s: {k: torch.from_numpy(np.ascontiguousarray(v)) for k, v in d.items() if k != 'ids'}
+            for s, d in arrs.items() if s != 'meta'}
+    attach(cfg, data)
+    print({s: len(data[s]['y']) for s in data}, f'data ready on {RT.DEV}' +
+          (f' in {time.time() - t0:.0f}s' if t0 else ''))
     return data
+
+
+def load_npz(cfg, path):
+    """Load any cache in the compact format (e.g. coco_compact.npz) and attach it to the runtime."""
+    arrs = load_compact(path)
+    meta = arrs.pop('meta', {})
+    print('meta:', {k: float(v) for k, v in meta.items()})
+    return attach_arrays(cfg, arrs, time.time())

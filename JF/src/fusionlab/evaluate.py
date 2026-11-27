@@ -60,6 +60,25 @@ def head_spread(experts, b, masks=None, xs=None):
     return torch.stack(out, 1)
 
 
+def apply_condition(b, cond, split, idx, g, perm):
+    """Returns (masks, xs) overrides that apply a test condition to batch b (text drop, noise, swap)."""
+    masks, xs = {}, {}
+    if cond.get('text_drop'):
+        tm = b['tm']
+        keep = (torch.rand(tm.shape, device=RT.DEV, generator=g) > cond['text_drop']) & tm
+        empty = keep.sum(1) == 0
+        keep[empty] = tm[empty] & (torch.cumsum(tm.int(), 1) == 1)[empty]
+        masks['t'] = keep
+    for m, lam in cond.get('noise', {}).items():
+        eps = torch.randn(b[m].shape, device=RT.DEV, generator=g) * RT.FEAT_STD[m]
+        xs[m] = (math.sqrt(1 - lam) * b[m] + math.sqrt(lam) * eps) * b[m + 'm'].unsqueeze(-1)
+    for m in cond.get('swap', ()):
+        j = perm[idx]
+        xs[m] = RT.DATA[split][m][j].to(RT.DEV)
+        masks[m] = RT.DATA[split][m + 'm'][j].to(RT.DEV)
+    return masks, xs
+
+
 @torch.no_grad()
 def predict(model, split, cond, seed=123, me=False):
     experts, fusion, head, d0, mods = (model[k] for k in ('experts', 'fusion', 'head', 'd0', 'mods'))
@@ -77,20 +96,7 @@ def predict(model, split, cond, seed=123, me=False):
     for i in range(0, n, 1024):
         idx = torch.arange(i, min(n, i + 1024))
         b = get_batch(split, idx, mods, g)
-        masks, xs = {}, {}
-        if cond.get('text_drop'):
-            tm = b['tm']
-            keep = (torch.rand(tm.shape, device=RT.DEV, generator=g) > cond['text_drop']) & tm
-            empty = keep.sum(1) == 0
-            keep[empty] = tm[empty] & (torch.cumsum(tm.int(), 1) == 1)[empty]
-            masks['t'] = keep
-        for m, lam in cond.get('noise', {}).items():
-            eps = torch.randn(b[m].shape, device=RT.DEV, generator=g) * RT.FEAT_STD[m]
-            xs[m] = (math.sqrt(1 - lam) * b[m] + math.sqrt(lam) * eps) * b[m + 'm'].unsqueeze(-1)
-        for m in cond.get('swap', ()):
-            j = perm[idx]
-            xs[m] = RT.DATA[split][m][j].to(RT.DEV)
-            masks[m] = RT.DATA[split][m + 'm'][j].to(RT.DEV)
+        masks, xs = apply_condition(b, cond, split, idx, g, perm)
         if me:
             mus, lvs, epi = me_beliefs(experts, b, RT.CFG['me_K'], RT.CFG['me_ratio'], gm, masks, xs)
         else:
