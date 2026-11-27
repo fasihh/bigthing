@@ -67,14 +67,14 @@ for seed in cfg['seeds']:
         witness = cxf.Witness().fit(auditor, BASE)
         workers = [(aud, 'frozen'), (aud, 'finetuned')] + ([('none', 'supervised')] if aud == 'vjepa' else [])
         for obj, rg in workers:
-            key = f'coco|{obj}|{rg}|cxf[{aud}]|{seed}'
+            key = f'coco|{obj}|{rg}|cxfv2[{aud}]|{seed}'
             if key in done:
                 continue
             model, info = runner.build_model(auditor, obj, rg, 'poe', BASE, cfg, seed, marg, 'coco')
             rows = cxf.evaluate_cxf(model, auditor, witness, conds,
                                     dict(key=key, grid='coco', objective=obj, regime=rg, seed=seed, auditor=aud, **info))
             for r in rows:
-                r['fusion'] = f'cxf[{aud}]'
+                r['fusion'] = f"{r['fusion']}[{aud}]"
             runner.append_rows(runner.paths()['results'], rows)
             print(key, 'T =', round(witness.T, 2))
 
@@ -125,10 +125,12 @@ report.scoreboard(C[C.regime == 'finetuned'], ['Cov90', 'Width90', 'IS90'], by=[
 det = []
 for _, r in ONE.iterrows():
     for col, nm in (('det_AUROC_sd', 'own sigma'), ('det_AUROC_dis', 'disagreement'), ('det_AUROC_cxf', 'CXF posterior')):
-        if col in r and pd.notna(r[col]) and (nm != 'CXF posterior' or str(r['fusion']).startswith('cxf')) \
-                and (nm == 'CXF posterior' or r['fusion'] == 'poe'):
-            det.append(dict(regime=r['regime'], seed=r['seed'], case=f"{r['kind']} {r['sensor']}", signal=nm,
-                            AUROC=r[col], fusion=nm))
+        f = str(r['fusion'])
+        if col in r and pd.notna(r[col]) and ((nm == 'CXF posterior' and f.startswith(('cxf[', 'hard_drop['))) or
+                                              (nm != 'CXF posterior' and f == 'poe')):
+            sig = nm if nm != 'CXF posterior' else ('marginal detector (Lee/CARAT)' if f.startswith('hard_drop') else 'CXF posterior')
+            det.append(dict(regime=r['regime'], seed=r['seed'], case=f"{r['kind']} {r['sensor']}", signal=sig,
+                            AUROC=r[col], fusion=sig))
 DET = pd.DataFrame(det)
 report.HEADLINE['AUROC'] = ('Detection AUROC', 'higher', 0.5)
 report.scoreboard(DET, ['AUROC'], by=['regime', 'case', 'signal'], save=os.path.join(OUT, 'scoreboard_10_q4_detect.csv'))
@@ -138,7 +140,7 @@ report.bar(DET[DET.regime == 'frozen'], 'AUROC', x='case', hue='signal', target=
            title='Can the system tell that a sensor is corrupted? (frozen experts)', save=os.path.join(OUT, 'fig_10_q4.png'))
 
 # %%
-LOC = ONE[ONE.fusion.astype(str).str.startswith('cxf') & ONE.localise_acc.notna()]
+LOC = ONE[ONE.fusion.astype(str).str.startswith(('cxf', 'hard_drop')) & ONE.localise_acc.notna()]
 report.scoreboard(LOC.assign(case=LOC.kind + ' ' + LOC.sensor), ['localise_acc', 'false_alarm'], by=['fusion', 'case'],
                   save=os.path.join(OUT, 'scoreboard_10_q4_localise.csv'))
 

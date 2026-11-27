@@ -75,7 +75,19 @@ class Witness:
             if best is None or abs(fa - self.far) < best[0]:
                 best = (abs(fa - self.far), T)
         self.T = best[1]
+        # Lee/CARAT-style baseline: per-modality marginal Mahalanobis, threshold = 99th percentile on clean data
+        self.marg_thr = np.quantile(self.marginal_scores(B), 0.99, axis=0)
         return self
+
+    def marginal_scores(self, O):
+        """Per-modality Mahalanobis^2 of each block under its own clean marginal (unimodal evidence only)."""
+        O = O - self.mean
+        out = []
+        for m in range(self.M):
+            Ci, _ = self._gauss(self._blk(m))
+            x = O[:, self._blk(m)]
+            out.append((x @ Ci * x).sum(1))
+        return np.stack(out, 1)
 
     def summarise(self, mus):
         mus = mus.cpu().numpy().astype(np.float64) if torch.is_tensor(mus) else mus
@@ -166,7 +178,47 @@ def _cond_modalities(cd, mods):
     return []
 
 
-def evaluate_cxf(model, auditor, witness, conds, tag):
+VARIANTS = {'cxf': 'soft posterior (BMA)', 'cxf_map': 'hard most-likely subset',
+            'hard_drop': 'Lee/CARAT-style hard drop (marginal detector)'}
+
+
+def _variant_weights(variant, witness, O, present, configs, p):
+    """Turn evidence into subset weights for each variant; returns (weights over configs, per-modality score)."""
+    M = witness.M
+    if variant == 'cxf':
+        r = np.zeros((len(O), M))
+        for j, R in enumerate(configs):
+            for m in present:
+                if m not in R:
+                    r[:, m] += p[:, j]
+        return p, r
+    if variant == 'cxf_map':
+        w = np.zeros_like(p)
+        w[np.arange(len(p)), p.argmax(1)] = 1.0
+        r = np.zeros((len(O), M))
+        for j, R in enumerate(configs):
+            for m in present:
+                if m not in R:
+                    r[:, m] += p[:, j]
+        return w, r
+    z = witness.marginal_scores(O) / witness.marg_thr                 # > 1 means flagged
+    w = np.zeros_like(p)
+    for i in range(len(O)):
+        flagged = [m for m in present if z[i, m] > 1]
+        drop = [max(flagged, key=lambda m: z[i, m])] if flagged else []  # Lee: drop the most surprising one
+        R = tuple(m for m in present if m not in drop)
+        w[i, configs.index(R)] = 1.0
+    return w, z
+
+
+def evaluate_cxf(model, auditor, witness, conds, tag, variants=('cxf', 'cxf_map', 'hard_drop')):
+    rows = []
+    for v in variants:
+        rows += _evaluate_variant(model, auditor, witness, conds, dict(tag), v)
+    return rows
+
+
+def _evaluate_variant(model, auditor, witness, conds, tag, variant):
     """Result rows (same columns as evaluate.evaluate_model) for fusion = 'cxf'.
     Decoders: D2 (raw mixture), D3b (pooled split conformal on CXF output), D3x (CXF-C: per-subset conformal
     calibrated on clean declared-missing subsets, mixed by the switch posterior)."""
@@ -177,7 +229,9 @@ def evaluate_cxf(model, auditor, witness, conds, tag):
         mus, lvs = _beliefs(model['experts'], split, cd)
         amus = mus if auditor is model['experts'] else _beliefs(auditor, split, cd)[0]
         present = [i for i in range(M) if cd['avail'][i]]
-        configs, p, r = witness.posterior(witness.summarise(amus), present)
+        O = witness.summarise(amus)
+        configs, p, _ = witness.posterior(O, present)
+        p, r = _variant_weights(variant, witness, O, present, configs, p)
         Ms, Vs, Sh = _subset_outputs(model, mus, lvs, configs)
         mean, var = _mixture(p, Ms, Vs)
         share = (p[:, :, None] * Sh).sum(1)
@@ -209,12 +263,12 @@ def evaluate_cxf(model, auditor, witness, conds, tag):
         for pl in L:
             Ss = np.stack([np.sqrt(te['Vs'][:, j]) * qR[R][pl] / z_lev(pl) for j, R in enumerate(te['configs'])], 1)
             hx[pl] = _mixture_halfwidth(te['p'], te['Ms'], Ss, m, pl)
-        base = dict(tag, fusion='cxf', unc='base', cond=cd['name'], kind=cd['kind'], lam=cd.get('lam', 0.0),
+        base = dict(tag, fusion=variant, unc='base', cond=cd['name'], kind=cd['kind'], lam=cd.get('lam', 0.0),
                     corrupted=cd.get('corrupted', ''), text_drop=cd.get('text_drop', 0.0), cxf_T=witness.T)
         for k, mm in enumerate(mods):
             base[f'share_{mm}'] = te['share'][:, k].mean()
             base[f'r_{mm}'] = te['r'][:, k].mean()
-        base['false_alarm'] = np.mean(te['r'].max(1) > 0.5)
+        base['false_alarm'] = np.mean(te['r'].max(1) > (1.0 if variant == 'hard_drop' else 0.5))
         decs = {'D2': (sd, {pl: z_lev(pl) * sd for pl in L}), 'D3b': (None, {pl: qn[pl] * sd for pl in L}),
                 'D3x': (None, hx)}
         per = {}

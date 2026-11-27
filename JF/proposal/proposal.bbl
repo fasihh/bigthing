@@ -1,4 +1,4 @@
-\begin{thebibliography}{20}
+\begin{thebibliography}{26}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -46,9 +46,11 @@ Y.~Wu, X.~Zhu, and H.~Liu.
   corrupted modalities.
 \newblock \emph{Electronics}, 15\penalty0 (16):\penalty0 3624, 2026.
 
-\bibitem[Palo et~al.(2026)]{palo2026reliability}
-P.~Palo et~al.
-\newblock Reliability-aware probabilistic fusion.
+\bibitem[Palo et~al.(2026)Palo, Tiwari, Carletti, Thakur, Gu, and
+  Clifton]{palo2026reliability}
+P.~Palo, Tiwari, Carletti, Thakur, Gu, and Clifton.
+\newblock Reliability-aware probabilistic fusion for multimodal learning with
+  incomplete evidence.
 \newblock \emph{arXiv preprint arXiv:2610.29621}, 2026.
 
 \bibitem[Bezirganyan et~al.(2025)]{bezirganyan2025discounted}
@@ -62,12 +64,42 @@ Yanshuai Cao and David~J. Fleet.
   {G}aussian process predictions.
 \newblock \emph{arXiv preprint arXiv:1410.7827}, 2014.
 
-\bibitem[Ma et~al.(2021)Ma, Han, Zhang, Fu, Zhou, and Hu]{ma2021monig}
-Huan Ma, Zongbo Han, Changqing Zhang, Huazhu Fu, Joey~Tianyi Zhou, and Qinghua
-  Hu.
-\newblock Trustworthy multimodal regression with mixture of normal-inverse
-  gamma distributions.
-\newblock In \emph{NeurIPS}, 2021.
+\bibitem[Tenali et~al.(2026)Tenali, Sidheekh, Mathur, Blasch, Kersting, and
+  Natarajan]{tenali2026c2mf}
+Tenali, Sidheekh, Mathur, Blasch, Kersting, and Natarajan.
+\newblock {C$^2$MF}, arXiv preprint arXiv:2603.26629, 2026.
+
+\bibitem[Lee et~al.(2020)Lee, Tan, Zhu, and Bohg]{lee2020detect}
+Michelle~A. Lee, Matthew Tan, Yuke Zhu, and Jeannette Bohg.
+\newblock Detect, reject, correct: Crossmodal compensation of corrupted
+  sensors.
+\newblock \emph{arXiv preprint arXiv:2012.00201}, 2020.
+
+\bibitem[Mohapatra et~al.(2026)Mohapatra, Sui, Yang, Lundell, Xia, and
+  Zhu]{mohapatra2026carat}
+Mohapatra, Sui, Yang, Lundell, Xia, and Zhu.
+\newblock Source-learned reliance for selective test-time adaptation of
+  multimodal time series.
+\newblock \emph{arXiv preprint arXiv:2610.07499}, 2026.
+
+\bibitem[Zollicoffer et~al.(2025)Zollicoffer, Chopra, Yan, Ma, Eaton, and
+  Riedl]{zollicoffer2025wiser}
+Zollicoffer, Chopra, Yan, Ma, Eaton, and Riedl.
+\newblock World model robustness via surprise recognition.
+\newblock \emph{arXiv preprint arXiv:2512.01119}, 2025.
+
+\bibitem[Jensen et~al.(2026)Jensen, Hammersh{\o}i, Wi{\'s}niewski, and
+  Fink]{jensen2026fault}
+Jensen, Hammersh{\o}i, Wi{\'s}niewski, and Fink.
+\newblock Robust fault detection in mechanical multimodal time series via
+  self-supervised cross-modal reconstruction.
+\newblock \emph{arXiv preprint arXiv:2609.16314}, 2026.
+
+\bibitem[Wang and Lan(2020)]{wang2020hbmvad}
+Zhen Wang and Chao Lan.
+\newblock Towards a hierarchical {B}ayesian model of multi-view anomaly
+  detection.
+\newblock In \emph{IJCAI}, pages 2420--2426, 2020.
 
 \bibitem[Azizi(2026)]{azizi2026conformal}
 I.~Azizi.
@@ -122,5 +154,12 @@ Amir Zadeh, Rowan Zellers, Eli Pincus, and Louis-Philippe Morency.
 \newblock {MOSI}: Multimodal corpus of sentiment intensity and subjectivity
   analysis in online opinion videos.
 \newblock \emph{arXiv preprint arXiv:1606.06259}, 2016.
+
+\bibitem[Ma et~al.(2021)Ma, Han, Zhang, Fu, Zhou, and Hu]{ma2021monig}
+Huan Ma, Zongbo Han, Changqing Zhang, Huazhu Fu, Joey~Tianyi Zhou, and Qinghua
+  Hu.
+\newblock Trustworthy multimodal regression with mixture of normal-inverse
+  gamma distributions.
+\newblock In \emph{NeurIPS}, 2021.
 
 \end{thebibliography}

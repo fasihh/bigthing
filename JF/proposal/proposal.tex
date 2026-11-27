@@ -70,24 +70,38 @@ to 0.87. But PoE does not use it, and fine-tuning erases it.
 with posterior probabilities (multiple-model adaptive estimation)~\cite{roumeliotis1998fault}, and per-sensor outlier
 indicators in robust fusion~\cite{wang2022outlier}. CXF is \emph{this idea rebuilt inside a learned latent world
 model}; we do not claim a new principle.
-\paragraph{Deep reliability-aware fusion.} An odd-one-out network weights leave-one-out fusions~\cite{yang2021defending},
-and quality heads are regressed to injected corruption severity~\cite{kumar2026prime,wu2026electronics}. Both are
-\emph{trained on corruptions}. Reliability-weighted PoE learns a sigmoid weight~\cite{palo2026reliability}, and its
-authors list label-free reliability signals as an open problem. Conflict discounting~\cite{bezirganyan2025discounted}
-and generalized PoE~\cite{cao2014gpoe} re-weight beliefs by hand-set rules. Evidential fusion~\cite{ma2021monig} models
-uncertainty but not inconsistency. Conformal methods calibrate per missing-modality pattern or by
-disagreement~\cite{azizi2026conformal,mccf2026}, but not under silent corruption.
+\paragraph{Deep reliability-aware fusion.} An odd-one-out network weights leave-one-out fusions by the probability
+that each modality is perturbed~\cite{yang2021defending}, and quality heads are regressed to injected corruption
+severity~\cite{kumar2026prime,wu2026electronics}: all are \emph{trained on corruptions}. Reliability-weighted PoE learns
+a sigmoid weight from task labels alone; its authors note that learning dependable quality signals remains an open
+challenge~\cite{palo2026reliability}. Conflict discounting~\cite{bezirganyan2025discounted}, generalized
+PoE~\cite{cao2014gpoe} and circuit-based credibility~\cite{tenali2026c2mf} re-weight beliefs by fixed or supervised rules.
+\paragraph{Corruption-free detection.} Several methods need no corrupted training data. A PoE trained with modality
+dropout can drop an expert flagged by its own reconstruction error~\cite{lee2020detect}; clean-only per-stream detectors
+can swap flagged streams for the missing-modality token~\cite{mohapatra2026carat}; world-model surprise can select a
+trusted sensor subset~\cite{zollicoffer2025wiser}; cross-modal reconstruction can flag faults~\cite{jensen2026fault}; and
+clean-only multi-view densities can flag inconsistent views~\cite{wang2020hbmvad}. These detectors are either unimodal
+(so they cannot see a realistic but mismatched sense) or unlocalised, and all make hard decisions without calibrated
+predictive uncertainty.
+\paragraph{Conformal.} Per-missingness-pattern (Mondrian) conformal calibration exists for multimodal
+regression~\cite{azizi2026conformal,mccf2026}, but it assumes the pattern is known.
+
 \paragraph{What is new in CXF.}
 \begin{enumerate}
-\item The ``system model'' of fault detection is a \emph{self-supervised JEPA latent world model}; evidence is
-  cross-modal latent prediction.
-\item The posterior is \emph{exact and fitted on clean, unlabelled data only}; no corruption is seen in training.
-\item Corruption becomes \emph{inferred missingness}: subset heads and per-subset conformal quantiles, already
-  calibrated for declared missingness, transfer to corruption.
-\item An \emph{auditor/worker split}: a frozen auditor keeps the cross-modal agreement that fine-tuning erases.
-\item Evaluation as \emph{calibrated} multimodal regression under corruption (coverage, CRPS, tracking ratio), which we
-  did not find reported for multimodal sentiment.
+\item An \emph{exact} posterior over all $2^M$ corruption configurations from a \emph{cross-modal conditional} density
+  of frozen JEPA beliefs fitted on clean, unlabelled data. Because the evidence is conditional, it can catch swapped or
+  mismatched senses that unimodal clean-only detectors miss by construction.
+\item \emph{Soft} corruption-as-missingness: Bayesian model averaging of the predictive densities of all trusted
+  subsets, rather than a hard reject~\cite{lee2020detect,mohapatra2026carat}.
+\item Per-pattern conformal intervals mixed by the posterior, so intervals calibrated only on declared missingness are
+  reused under inferred corruption; coverage under corruption is measured empirically.
+\item The empirical finding that fine-tuning erases cross-modal agreement, and an auditor/worker split that keeps it.
+\item The first evaluation of multimodal \emph{regression} under silent corruption, including swaps, by coverage, CRPS
+  and tracking ratio, on MOSEI and an image-plus-two-captions COCO benchmark (prior MOSEI reliability work reports
+  classification calibration under injected corruption~\cite{wu2026electronics}).
 \end{enumerate}
+We do not claim the principle (analytical redundancy), clean-data-only fitting, hard corruption-to-missing conversion,
+or latent world-model surprise as new.
 
 \section{Method: Cross-Examined Fusion}
 \begin{figure}[t]
@@ -140,7 +154,7 @@ Its variance includes the spread between subsets, and $r_m=P(c_m=1\mid o)$ is a 
 \textbf{CXF-C} mixes per-subset conformal intervals, calibrated on clean data with \emph{declared} missing subsets, by
 $p(\R\mid o)$. If the posterior is right, a corrupted clip is calibrated as if the sense were missing.
 
-\paragraph{Why exact inference, not a learned weight.} A learned residual-to-weight map needs labels or injected
+\paragraph{Why exact inference, not a learned weight or a hard reject.} A learned residual-to-weight map needs labels or injected
 corruptions, which puts it in the crowded corruption-supervised family. The exact posterior needs only clean data,
 gives testable probabilities, and yields subset-level mixing, hence CXF-C. The learned map is kept as an ablation
 and a baseline.
@@ -209,6 +223,11 @@ a hypothesis bank with identity covariance (CXF without learned relations).
 PoE~\cite{palo2026reliability}, and odd-one-out fusion~\cite{yang2021defending} trained on some corruption families and
 tested on others (reported separately as corruption-supervised).
 (4)~Conformal: split, per-mask (Mondrian)~\cite{azizi2026conformal}, disagreement-scaled.
+(5)~\textbf{Corruption-free detectors (the decisive comparison):} a Lee/CARAT-style hard drop (clean-only per-modality
+Mahalanobis detector, flagged modality set to missing, its per-mask interval)~\cite{lee2020detect,mohapatra2026carat};
+CXF with a hard most-likely subset instead of averaging; WISER-style lowest-surprise subset
+selection~\cite{zollicoffer2025wiser}; and a reconstruction-evidence variant of CXF, to test whether JEPA beliefs
+matter~\cite{jensen2026fault}. CXF must beat the hard drop on swaps (H2) and on coverage (H4).
 
 
 
@@ -263,8 +282,9 @@ Weeks & Work and decision\\
 \item \textbf{Misspecified Gaussian}: the temperature is set by the clean false-alarm rate; a Student-$t$ ablation is
   included.
 \item \textbf{Two-of-three ambiguity} is certain in principle, and is reported as an identifiability limit.
-\item \textbf{``This is just fault detection''}: we cite the classical work up front, claim only the deltas listed in
-  Section~2, and include the identity-covariance hypothesis bank to show that learned relations matter.
+\item \textbf{``This is just fault detection'' or ``just Lee et al./CARAT with a soft posterior''}: we cite them up
+  front, claim only the deltas in Section~2, and include the identity-covariance hypothesis bank and the hard-drop
+  baselines. The decisive evidence is swaps: unimodal clean-only detectors cannot detect them by construction.
 \end{itemize}
 \textbf{Fallbacks.} F1: keep the inference engine, use input-level evidence (Time Auditor). F2: promote Persistence
 Targets to the headline, with CXF as a quantified negative result. F3: a minimum viable contribution, the first
