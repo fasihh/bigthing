@@ -1,4 +1,4 @@
-\begin{thebibliography}{25}
+\begin{thebibliography}{31}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -37,12 +37,12 @@ Yongchao Huang.
   probabilistic world models.
 \newblock \emph{arXiv preprint arXiv:2601.14354}, 2026.
 
-\bibitem[Burda et~al.(2019)Burda, Edwards, Pathak, Storkey, Darrell, and
-  Efros]{burda2019curiosity}
+\bibitem[Burda et~al.(2019{\natexlab{a}})Burda, Edwards, Pathak, Storkey,
+  Darrell, and Efros]{burda2019curiosity}
 Yuri Burda, Harri Edwards, Deepak Pathak, Amos Storkey, Trevor Darrell, and
   Alexei~A. Efros.
 \newblock Large-scale study of curiosity-driven learning.
-\newblock In \emph{ICLR}, 2019.
+\newblock In \emph{ICLR}, 2019{\natexlab{a}}.
 
 \bibitem[Grill et~al.(2020)]{grill2020byol}
 Jean-Bastien Grill et~al.
@@ -151,5 +151,40 @@ Alex Kendall and Yarin Gal.
 \newblock What uncertainties do we need in {B}ayesian deep learning for
   computer vision?
 \newblock In \emph{NeurIPS}, 2017.
+
+\bibitem[Lin et~al.(2014)Lin, Maire, Belongie, et~al.]{lin2014coco}
+Tsung-Yi Lin, Michael Maire, Serge Belongie, et~al.
+\newblock Microsoft {COCO}: Common objects in context.
+\newblock In \emph{ECCV}, 2014.
+
+\bibitem[Mukhoti et~al.(2023)Mukhoti, Kirsch, van Amersfoort, Torr, and
+  Gal]{mukhoti2023ddu}
+Jishnu Mukhoti, Andreas Kirsch, Joost van Amersfoort, Philip H.~S. Torr, and
+  Yarin Gal.
+\newblock Deep deterministic uncertainty: A new simple baseline.
+\newblock In \emph{CVPR}, 2023.
+
+\bibitem[Burda et~al.(2019{\natexlab{b}})Burda, Edwards, Storkey, and
+  Klimov]{burda2019rnd}
+Yuri Burda, Harrison Edwards, Amos Storkey, and Oleg Klimov.
+\newblock Exploration by random network distillation.
+\newblock In \emph{ICLR}, 2019{\natexlab{b}}.
+
+\bibitem[Clark et~al.(2020)Clark, Luong, Le, and Manning]{clark2020electra}
+Kevin Clark, Minh-Thang Luong, Quoc~V. Le, and Christopher~D. Manning.
+\newblock {ELECTRA}: Pre-training text encoders as discriminators rather than
+  generators.
+\newblock In \emph{ICLR}, 2020.
+
+\bibitem[Yang et~al.(2021)Yang, Lin, Barman, Condessa, and
+  Kolter]{yang2021oddoneout}
+Karren Yang, Wan-Yi Lin, Manash Barman, Filipe Condessa, and Zico Kolter.
+\newblock Defending multimodal fusion models against single-source adversaries.
+\newblock In \emph{CVPR}, 2021.
+
+\bibitem[pri(2026)]{prime2026}
+Adaptive modality reliability diagnosis and restoration for robust multimodal
+  intent recognition.
+\newblock \emph{arXiv preprint arXiv:2608.03475}, 2026.
 
 \end{thebibliography}
