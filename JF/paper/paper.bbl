@@ -1,4 +1,4 @@
-\begin{thebibliography}{31}
+\begin{thebibliography}{30}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -61,10 +61,21 @@ Nikolaos Giakoumoglou et~al.
 \newblock Stochastic joint embedding predictive architectures.
 \newblock \emph{arXiv preprint arXiv:2611.09302}, 2026.
 
+\bibitem[Kendall and Gal(2017)]{kendall2017uncertainties}
+Alex Kendall and Yarin Gal.
+\newblock What uncertainties do we need in {B}ayesian deep learning for
+  computer vision?
+\newblock In \emph{NeurIPS}, 2017.
+
 \bibitem[Wu and Goodman(2018)]{wu2018mvae}
 Mike Wu and Noah Goodman.
 \newblock Multimodal generative models for scalable weakly-supervised learning.
 \newblock In \emph{NeurIPS}, 2018.
+
+\bibitem[Hinton(2002)]{hinton2002poe}
+Geoffrey~E. Hinton.
+\newblock Training products of experts by minimizing contrastive divergence.
+\newblock 2002.
 
 \bibitem[Shi et~al.(2019)Shi, Siddharth, Paige, and Torr]{shi2019mmvae}
 Yuge Shi, N.~Siddharth, Brooks Paige, and Philip H.~S. Torr.
@@ -111,17 +122,6 @@ Alireza Moayedikia.
 \newblock Conformal fusion under missing modalities.
 \newblock \emph{arXiv preprint arXiv:2608.07183}, 2026.
 
-\bibitem[Gneiting and Raftery(2007)]{gneiting2007scoring}
-Tilmann Gneiting and Adrian~E. Raftery.
-\newblock Strictly proper scoring rules, prediction, and estimation.
-\newblock \emph{Journal of the American Statistical Association}, 102\penalty0
-  (477):\penalty0 359--378, 2007.
-
-\bibitem[Geifman and El-Yaniv(2017)]{geifman2017selective}
-Yonatan Geifman and Ran El-Yaniv.
-\newblock Selective classification for deep neural networks.
-\newblock In \emph{NeurIPS}, 2017.
-
 \bibitem[Bardes et~al.(2022)Bardes, Ponce, and LeCun]{bardes2022vicreg}
 Adrien Bardes, Jean Ponce, and Yann LeCun.
 \newblock {VICReg}: Variance-invariance-covariance regularization for
@@ -145,12 +145,6 @@ Gilles Degottex, John Kane, Thomas Drugman, Tuomo Raitio, and Stefan Scherer.
 \newblock {COVAREP}: A collaborative voice analysis repository for speech
   technologies.
 \newblock In \emph{ICASSP}, 2014.
-
-\bibitem[Kendall and Gal(2017)]{kendall2017uncertainties}
-Alex Kendall and Yarin Gal.
-\newblock What uncertainties do we need in {B}ayesian deep learning for
-  computer vision?
-\newblock In \emph{NeurIPS}, 2017.
 
 \bibitem[Lin et~al.(2014)Lin, Maire, Belongie, et~al.]{lin2014coco}
 Tsung-Yi Lin, Michael Maire, Serge Belongie, et~al.
