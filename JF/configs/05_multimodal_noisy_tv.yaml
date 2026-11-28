@@ -1,0 +1,12 @@
+# 05: multimodal noisy TV with training: B = an extra pure-noise modality, D = Huang-style sticky distractor.
+seeds: [0, 1, 2]
+objectives: [vjepa, sjepa, recon, align, none]
+nc_frozen: [concat, late_avg, moe, attn, poe, poe_pc, monig]
+nc_supervised: [concat, moe, poe, monig]
+dist_patterns: [TAV_indep, TAV_shared]
+dist_sigmas: [2.0, 8.0]
+dist_frozen: [moe, attn, poe]
+dist_supervised: [poe]
+noise_dim: 32
+dist_k: 8
+dist_rho: 0.9

@@ -1,0 +1,25 @@
+JF 12 detect-and-gate on real CMU-MOSEI (Kaggle CPU, 2026-11-28; frozen PoE models, 3 seeds x 3 objectives)
+seen = white noise lam=1 / random swap (ELECTRA generated these for itself); held-out = noise@0.5, halfnoise, gain x3,
+dead sensor, time shuffle, two noisy modalities, nearest-neighbour swap.
+
+objective technique                clean_MAE seen_MAE seen_NLL heldout_MAE heldout_NLL AUROC_seen AUROC_heldout loc_acc
+vjepa     poe (ungated)             0.729    0.786    1.467    0.754       1.412       0.453      0.429         -
+vjepa     oracle_drop                 -      0.760    1.415    0.760       1.415         -          -           -
+vjepa     electra                   0.730    0.776    1.444    0.762       1.422       0.874      0.819        0.729
+vjepa     combo:electra+crossmodal  0.731    0.782    1.458    0.758       1.417       0.802      0.786        0.725
+vjepa     input_maha                0.730    0.785    1.466    0.757       1.415       0.493      0.579        0.417
+vjepa     crossmodal                0.730    0.786    1.467    0.758       1.417       0.548      0.632        0.499
+vjepa     latent_maha               0.730    0.786    1.467    0.754       1.412       0.512      0.536        0.344
+vjepa_vt  poe (ungated)             0.725    0.769    1.437    0.756       1.411       0.588      0.570         -
+vjepa_vt  oracle_drop                 -      0.751    1.401    0.751       1.401         -          -           -
+vjepa_vt  electra                   0.726    0.763    1.422    0.756       1.409       0.874      0.819        0.729
+vjepa_vt  combo:electra+crossmodal  0.726    0.765    1.429    0.752       1.405       0.802      0.786        0.725
+align     poe (ungated)             0.700    0.764    1.437    0.734       1.383       0.522      0.481         -
+align     oracle_drop                 -      0.737    1.374    0.737       1.374         -          -           -
+align     electra                   0.701    0.753    1.406    0.742       1.391       0.874      0.819        0.729
+align     combo:electra+crossmodal  0.702    0.759    1.425    0.740       1.387       0.802      0.786        0.725
+
+Held-out MAE by kind (vjepa_vt): dead poe 0.814 / electra+crossmodal 0.761 / oracle 0.751; gain poe 0.725 / gates 0.751;
+noise2 poe 0.802 / electra 0.798; swapnn ~0.755 for all (undetectable); shuffle ~0.727 all.
+Paired wins vs PoE on corrupted NLL (9 objective x seed pairs): electra 6/9, electra+crossmodal 4/9, latent_maha 8/9 (tiny margin),
+input_maha 1/9, crossmodal 1/9, oracle 9/9.

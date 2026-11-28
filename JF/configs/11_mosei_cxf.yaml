@@ -1,0 +1,9 @@
+# 11: Cross-Examined Fusion on CMU-MOSEI, reusing the experts from 01 and the stage-2 models from 03.
+seeds: [0, 1, 2]
+objectives: [vjepa, align, none]
+frozen: [poe, moe, attn, monig, rpoe, dapoe]
+finetuned: [poe, monig]
+supervised: [poe, monig]
+auditors: [vjepa, align]
+noise_lambdas: [0.5, 1.0]
+text_drops: [0.5]

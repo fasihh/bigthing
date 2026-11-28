@@ -1,0 +1,3 @@
+# 00: convert MMSA aligned_50.pkl -> mosei_compact.npz (one time). No training.
+max_len: 50
+text_pca: 128

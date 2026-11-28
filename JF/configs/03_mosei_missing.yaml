@@ -1,0 +1,7 @@
+# 03: CMU-MOSEI with missing modalities (7 subsets) and partly missing text. Comparative: every fusion method.
+seeds: [0, 1, 2]
+objectives: [vjepa, sjepa, recon, align, none]
+frozen: [concat, late_avg, moe, attn, poe, poe_pc, monig]
+finetuned: [concat, moe, attn, poe, monig]
+supervised: [concat, moe, attn, poe, monig]
+text_drops: [0.25, 0.5, 0.75, 0.9]

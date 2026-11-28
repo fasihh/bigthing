@@ -1,0 +1,4 @@
+# 01: label-free expert pretraining, shared by notebooks 03, 04, 06 and 07 (attach this notebook's output there).
+seeds: [0, 1, 2]
+objectives: [vjepa, sjepa, recon, align, vjepa_vt, vjepa_vts, vjepa_pe]
+pre_epochs: 30

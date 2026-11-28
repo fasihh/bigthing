@@ -1,0 +1,165 @@
+\begin{thebibliography}{26}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Kendall and Gal(2017)]{kendall2017uncertainties}
+Alex Kendall and Yarin Gal.
+\newblock What uncertainties do we need in {B}ayesian deep learning for
+  computer vision?
+\newblock In \emph{NeurIPS}, 2017.
+
+\bibitem[Chow(1980)]{chow1980failure}
+Edward Yu-Kwong Chow.
+\newblock A failure detection system design methodology.
+\newblock Technical Report LIDS-TH-1055, MIT Laboratory for Information and
+  Decision Systems, 1980.
+
+\bibitem[Roumeliotis et~al.(1998)Roumeliotis, Sukhatme, and
+  Bekey]{roumeliotis1998fault}
+Stergios~I. Roumeliotis, Gaurav~S. Sukhatme, and George~A. Bekey.
+\newblock Sensor fault detection and identification in a mobile robot.
+\newblock In \emph{IEEE/RSJ IROS}, 1998.
+
+\bibitem[Wang et~al.(2022)]{wang2022outlier}
+Hongwei Wang et~al.
+\newblock Outlier-detection based robust information fusion for networked
+  systems.
+\newblock \emph{IEEE Sensors Journal (arXiv:1909.10006)}, 2022.
+
+\bibitem[Yang et~al.(2021)Yang, Lin, Barman, Condessa, and
+  Kolter]{yang2021defending}
+Karren Yang, Wan-Yi Lin, Manash Barman, Filipe Condessa, and Zico Kolter.
+\newblock Defending multimodal fusion models against single-source adversaries.
+\newblock In \emph{CVPR}, 2021.
+
+\bibitem[Kumar et~al.(2026)]{kumar2026prime}
+S.~Kumar et~al.
+\newblock Adaptive modality reliability diagnosis and restoration ({PRIME}).
+\newblock \emph{arXiv preprint arXiv:2608.03475}, 2026.
+
+\bibitem[Wu et~al.(2026)Wu, Zhu, and Liu]{wu2026electronics}
+Y.~Wu, X.~Zhu, and H.~Liu.
+\newblock Reliability-aware multi-modal sentiment analysis under missing and
+  corrupted modalities.
+\newblock \emph{Electronics}, 15\penalty0 (16):\penalty0 3624, 2026.
+
+\bibitem[Palo et~al.(2026)Palo, Tiwari, Carletti, Thakur, Gu, and
+  Clifton]{palo2026reliability}
+P.~Palo, Tiwari, Carletti, Thakur, Gu, and Clifton.
+\newblock Reliability-aware probabilistic fusion for multimodal learning with
+  incomplete evidence.
+\newblock \emph{arXiv preprint arXiv:2610.29621}, 2026.
+
+\bibitem[Bezirganyan et~al.(2025)]{bezirganyan2025discounted}
+Grigor Bezirganyan et~al.
+\newblock Discounted belief fusion.
+\newblock In \emph{AISTATS}, 2025.
+
+\bibitem[Cao and Fleet(2014)]{cao2014gpoe}
+Yanshuai Cao and David~J. Fleet.
+\newblock Generalized product of experts for automatic and principled fusion of
+  {G}aussian process predictions.
+\newblock \emph{arXiv preprint arXiv:1410.7827}, 2014.
+
+\bibitem[Tenali et~al.(2026)Tenali, Sidheekh, Mathur, Blasch, Kersting, and
+  Natarajan]{tenali2026c2mf}
+Tenali, Sidheekh, Mathur, Blasch, Kersting, and Natarajan.
+\newblock {C$^2$MF}, arXiv preprint arXiv:2603.26629, 2026.
+
+\bibitem[Lee et~al.(2020)Lee, Tan, Zhu, and Bohg]{lee2020detect}
+Michelle~A. Lee, Matthew Tan, Yuke Zhu, and Jeannette Bohg.
+\newblock Detect, reject, correct: Crossmodal compensation of corrupted
+  sensors.
+\newblock \emph{arXiv preprint arXiv:2012.00201}, 2020.
+
+\bibitem[Mohapatra et~al.(2026)Mohapatra, Sui, Yang, Lundell, Xia, and
+  Zhu]{mohapatra2026carat}
+Mohapatra, Sui, Yang, Lundell, Xia, and Zhu.
+\newblock Source-learned reliance for selective test-time adaptation of
+  multimodal time series.
+\newblock \emph{arXiv preprint arXiv:2610.07499}, 2026.
+
+\bibitem[Zollicoffer et~al.(2025)Zollicoffer, Chopra, Yan, Ma, Eaton, and
+  Riedl]{zollicoffer2025wiser}
+Zollicoffer, Chopra, Yan, Ma, Eaton, and Riedl.
+\newblock World model robustness via surprise recognition.
+\newblock \emph{arXiv preprint arXiv:2512.01119}, 2025.
+
+\bibitem[Jensen et~al.(2026)Jensen, Hammersh{\o}i, Wi{\'s}niewski, and
+  Fink]{jensen2026fault}
+Jensen, Hammersh{\o}i, Wi{\'s}niewski, and Fink.
+\newblock Robust fault detection in mechanical multimodal time series via
+  self-supervised cross-modal reconstruction.
+\newblock \emph{arXiv preprint arXiv:2609.16314}, 2026.
+
+\bibitem[Wang and Lan(2020)]{wang2020hbmvad}
+Zhen Wang and Chao Lan.
+\newblock Towards a hierarchical {B}ayesian model of multi-view anomaly
+  detection.
+\newblock In \emph{IJCAI}, pages 2420--2426, 2020.
+
+\bibitem[Azizi(2026)]{azizi2026conformal}
+I.~Azizi.
+\newblock Conformal calibration for multi-modal regression with missing
+  modalities.
+\newblock \emph{arXiv preprint arXiv:2608.07795}, 2026.
+
+\bibitem[Moayedikia(2026)]{mccf2026}
+Alireza Moayedikia.
+\newblock Conformal fusion under missing modalities.
+\newblock \emph{arXiv preprint arXiv:2608.07183}, 2026.
+
+\bibitem[Feichtenhofer et~al.(2021)Feichtenhofer, Fan, Xiong, Girshick, and
+  He]{feichtenhofer2021largescale}
+Christoph Feichtenhofer, Haoqi Fan, Bo~Xiong, Ross Girshick, and Kaiming He.
+\newblock A large-scale study on unsupervised spatiotemporal representation
+  learning.
+\newblock In \emph{CVPR}, 2021.
+
+\bibitem[Gulati and Nemenman(2026)]{gulati2026contrast}
+P.~Gulati and Ilya Nemenman.
+\newblock Contrast encodes inductive bias.
+\newblock \emph{arXiv preprint arXiv:2606.07770}, 2026.
+
+\bibitem[Zadeh et~al.(2018)Zadeh, Liang, Poria, Cambria, and
+  Morency]{zadeh2018mosei}
+AmirAli~Bagher Zadeh, Paul~Pu Liang, Soujanya Poria, Erik Cambria, and
+  Louis-Philippe Morency.
+\newblock Multimodal language analysis in the wild: {CMU-MOSEI} dataset and
+  interpretable dynamic fusion graph.
+\newblock In \emph{ACL}, 2018.
+
+\bibitem[Lin et~al.(2014)Lin, Maire, Belongie, Hays, Perona, Ramanan,
+  Doll{\'a}r, and Zitnick]{lin2014coco}
+Tsung-Yi Lin, Michael Maire, Serge Belongie, James Hays, Pietro Perona, Deva
+  Ramanan, Piotr Doll{\'a}r, and C.~Lawrence Zitnick.
+\newblock Microsoft {COCO}: Common objects in context.
+\newblock In \emph{ECCV}, 2014.
+
+\bibitem[Oquab et~al.(2024)]{oquab2023dinov2}
+Maxime Oquab et~al.
+\newblock {DINOv2}: Learning robust visual features without supervision.
+\newblock \emph{Transactions on Machine Learning Research}, 2024.
+
+\bibitem[Reimers and Gurevych(2019)]{reimers2019sbert}
+Nils Reimers and Iryna Gurevych.
+\newblock Sentence-{BERT}: Sentence embeddings using {S}iamese {BERT}-networks.
+\newblock In \emph{EMNLP}, 2019.
+
+\bibitem[Zadeh et~al.(2016)Zadeh, Zellers, Pincus, and Morency]{zadeh2016mosi}
+Amir Zadeh, Rowan Zellers, Eli Pincus, and Louis-Philippe Morency.
+\newblock {MOSI}: Multimodal corpus of sentiment intensity and subjectivity
+  analysis in online opinion videos.
+\newblock \emph{arXiv preprint arXiv:1606.06259}, 2016.
+
+\bibitem[Ma et~al.(2021)Ma, Han, Zhang, Fu, Zhou, and Hu]{ma2021monig}
+Huan Ma, Zongbo Han, Changqing Zhang, Huazhu Fu, Joey~Tianyi Zhou, and Qinghua
+  Hu.
+\newblock Trustworthy multimodal regression with mixture of normal-inverse
+  gamma distributions.
+\newblock In \emph{NeurIPS}, 2021.
+
+\end{thebibliography}

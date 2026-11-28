@@ -1,0 +1,154 @@
+\begin{thebibliography}{25}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Zadeh et~al.(2018)Zadeh, Liang, Poria, Cambria, and
+  Morency]{zadeh2018mosei}
+AmirAli~Bagher Zadeh, Paul~Pu Liang, Soujanya Poria, Erik Cambria, and
+  Louis-Philippe Morency.
+\newblock Multimodal language analysis in the wild: {CMU-MOSEI} dataset and
+  interpretable dynamic fusion graph.
+\newblock In \emph{ACL}, 2018.
+
+\bibitem[Mao et~al.(2022)Mao, Yuan, Xu, Yu, Liu, and Gao]{mao2022msena}
+Huisheng Mao, Ziqi Yuan, Hua Xu, Wenmeng Yu, Yihe Liu, and Kai Gao.
+\newblock {M-SENA}: An integrated platform for multimodal sentiment analysis.
+\newblock In \emph{ACL System Demonstrations}, 2022.
+
+\bibitem[LeCun(2022)]{lecun2022path}
+Yann LeCun.
+\newblock A path towards autonomous machine intelligence, 2022.
+\newblock OpenReview preprint.
+
+\bibitem[Assran et~al.(2023)Assran, Duval, Misra, Bojanowski, Vincent, Rabbat,
+  LeCun, and Ballas]{assran2023ijepa}
+Mahmoud Assran, Quentin Duval, Ishan Misra, Piotr Bojanowski, Pascal Vincent,
+  Michael Rabbat, Yann LeCun, and Nicolas Ballas.
+\newblock Self-supervised learning from images with a joint-embedding
+  predictive architecture.
+\newblock In \emph{CVPR}, 2023.
+
+\bibitem[Huang(2026)]{huang2026vjepa}
+Yongchao Huang.
+\newblock {VJEPA}: Variational joint embedding predictive architectures as
+  probabilistic world models.
+\newblock \emph{arXiv preprint arXiv:2601.14354}, 2026.
+
+\bibitem[Burda et~al.(2019)Burda, Edwards, Pathak, Storkey, Darrell, and
+  Efros]{burda2019curiosity}
+Yuri Burda, Harri Edwards, Deepak Pathak, Amos Storkey, Trevor Darrell, and
+  Alexei~A. Efros.
+\newblock Large-scale study of curiosity-driven learning.
+\newblock In \emph{ICLR}, 2019.
+
+\bibitem[Grill et~al.(2020)]{grill2020byol}
+Jean-Bastien Grill et~al.
+\newblock Bootstrap your own latent: A new approach to self-supervised
+  learning.
+\newblock In \emph{NeurIPS}, 2020.
+
+\bibitem[G{\"o}gl and Yau(2026)]{gogl2026varjepa}
+Moritz G{\"o}gl and Christopher Yau.
+\newblock Var-{JEPA}: A variational formulation of joint embedding predictive
+  architectures.
+\newblock \emph{arXiv preprint arXiv:2603.20111}, 2026.
+
+\bibitem[Giakoumoglou et~al.(2026)]{giakoumoglou2026sjepa}
+Nikolaos Giakoumoglou et~al.
+\newblock Stochastic joint embedding predictive architectures.
+\newblock \emph{arXiv preprint arXiv:2611.09302}, 2026.
+
+\bibitem[Kendall and Gal(2017)]{kendall2017uncertainties}
+Alex Kendall and Yarin Gal.
+\newblock What uncertainties do we need in {B}ayesian deep learning for
+  computer vision?
+\newblock In \emph{NeurIPS}, 2017.
+
+\bibitem[Wu and Goodman(2018)]{wu2018mvae}
+Mike Wu and Noah Goodman.
+\newblock Multimodal generative models for scalable weakly-supervised learning.
+\newblock In \emph{NeurIPS}, 2018.
+
+\bibitem[Hinton(2002)]{hinton2002poe}
+Geoffrey~E. Hinton.
+\newblock Training products of experts by minimizing contrastive divergence.
+\newblock 2002.
+
+\bibitem[Shi et~al.(2019)Shi, Siddharth, Paige, and Torr]{shi2019mmvae}
+Yuge Shi, N.~Siddharth, Brooks Paige, and Philip H.~S. Torr.
+\newblock Variational mixture-of-experts autoencoders for multi-modal deep
+  generative models.
+\newblock In \emph{NeurIPS}, 2019.
+
+\bibitem[Han et~al.(2021)Han, Zhang, Fu, and Zhou]{han2021tmc}
+Zongbo Han, Changqing Zhang, Huazhu Fu, and Joey~Tianyi Zhou.
+\newblock Trusted multi-view classification.
+\newblock In \emph{ICLR}, 2021.
+
+\bibitem[Ma et~al.(2021)Ma, Han, Zhang, Fu, Zhou, and Hu]{ma2021monig}
+Huan Ma, Zongbo Han, Changqing Zhang, Huazhu Fu, Joey~Tianyi Zhou, and Qinghua
+  Hu.
+\newblock Trustworthy multimodal regression with mixture of normal-inverse
+  gamma distributions.
+\newblock In \emph{NeurIPS}, 2021.
+
+\bibitem[Amini et~al.(2020)Amini, Schwarting, Soleimany, and
+  Rus]{amini2020evidential}
+Alexander Amini, Wilko Schwarting, Ava Soleimany, and Daniela Rus.
+\newblock Deep evidential regression.
+\newblock In \emph{NeurIPS}, 2020.
+
+\bibitem[Guo et~al.(2017)Guo, Pleiss, Sun, and Weinberger]{guo2017calibration}
+Chuan Guo, Geoff Pleiss, Yu~Sun, and Kilian~Q. Weinberger.
+\newblock On calibration of modern neural networks.
+\newblock In \emph{ICML}, 2017.
+
+\bibitem[Vovk et~al.(2005)Vovk, Gammerman, and Shafer]{vovk2005algorithmic}
+Vladimir Vovk, Alex Gammerman, and Glenn Shafer.
+\newblock \emph{Algorithmic Learning in a Random World}.
+\newblock Springer, 2005.
+
+\bibitem[Angelopoulos and Bates(2021)]{angelopoulos2021gentle}
+Anastasios~N. Angelopoulos and Stephen Bates.
+\newblock A gentle introduction to conformal prediction and distribution-free
+  uncertainty quantification.
+\newblock \emph{arXiv preprint arXiv:2107.07511}, 2021.
+
+\bibitem[Moayedikia(2026)]{mccf2026}
+Alireza Moayedikia.
+\newblock Conformal fusion under missing modalities.
+\newblock \emph{arXiv preprint arXiv:2608.07183}, 2026.
+
+\bibitem[Bardes et~al.(2022)Bardes, Ponce, and LeCun]{bardes2022vicreg}
+Adrien Bardes, Jean Ponce, and Yann LeCun.
+\newblock {VICReg}: Variance-invariance-covariance regularization for
+  self-supervised learning.
+\newblock In \emph{ICLR}, 2022.
+
+\bibitem[van~den Oord et~al.(2018)van~den Oord, Li, and Vinyals]{oord2018cpc}
+Aaron van~den Oord, Yazhe Li, and Oriol Vinyals.
+\newblock Representation learning with contrastive predictive coding.
+\newblock \emph{arXiv preprint arXiv:1807.03748}, 2018.
+
+\bibitem[Devlin et~al.(2019)Devlin, Chang, Lee, and Toutanova]{devlin2019bert}
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova.
+\newblock {BERT}: Pre-training of deep bidirectional transformers for language
+  understanding.
+\newblock In \emph{NAACL}, 2019.
+
+\bibitem[Degottex et~al.(2014)Degottex, Kane, Drugman, Raitio, and
+  Scherer]{degottex2014covarep}
+Gilles Degottex, John Kane, Thomas Drugman, Tuomo Raitio, and Stefan Scherer.
+\newblock {COVAREP}: A collaborative voice analysis repository for speech
+  technologies.
+\newblock In \emph{ICASSP}, 2014.
+
+\bibitem[Lin et~al.(2014)Lin, Maire, Belongie, et~al.]{lin2014coco}
+Tsung-Yi Lin, Michael Maire, Serge Belongie, et~al.
+\newblock Microsoft {COCO}: Common objects in context.
+\newblock In \emph{ECCV}, 2014.
+
+\end{thebibliography}

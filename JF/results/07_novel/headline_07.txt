@@ -1,0 +1,22 @@
+JF 07 novel methods — key numbers (Kaggle run, 2026-11-28, 7h39m, 3 seeds, mean ± sd)
+
+Q1 PoE, 7 subsets (MAE / NLL / Cov90 / CalErr / unc-err Spearman)
+finetuned: vjepa 0.687/1.291/0.873/0.027/0.092 | vjepa_pe 0.683/1.289/0.875/0.030/0.086 | vjepa_vt 0.693/1.307/0.871/0.028/0.123
+           vjepa_vts 0.687/1.287/0.878/0.026/0.119 | sjepa 0.692/1.306/0.869/0.029/0.127
+frozen:    vjepa 0.770/1.422/0.892/0.040/-0.024 | vjepa_pe 0.771/1.423 | vjepa_vt 0.762/1.417/0.893 | vjepa_vts 0.780/1.444 | sjepa 0.765/1.415
+
+Q2 frozen V-JEPA, fusions (NLL): poe=dapoe=rpoe=rdapoe 1.422, mpoe 1.422 (beats poe 2/3 seeds), moe 1.443, monig 1.468
+   -> robust/disagreement variants are identical to PoE on clean subsets (they only act under conflict).
+
+Q3 corruption-flag AUROC, PoE, text=noise λ=1 (0.5 = chance)
+               sigma(base)  sigma(me)  masking-ens  disagreement  pred-ensemble
+vjepa          0.380        0.582      0.632        0.367         -
+sjepa          0.447        0.680      0.681        0.320         -
+vjepa_pe       0.370        0.590      0.638        0.355         0.331
+vjepa_vt       0.707        0.704      0.737        0.359         -
+vjepa_vts      0.704        0.701      0.721        0.462         -
+   -> variational target turns sigma from below-chance (0.38) to 0.71. Sigma magnitude still rises only ~3% (ratio ~1.03).
+
+Q5 noise channel (weight on N / MAE / Cov90): vjepa poe 0.045/0.729/0.899; vjepa_vt poe 0.063/0.727/0.891;
+   vjepa_vt mpoe 1.448 (!) /0.778/0.922 -> mpoe misbehaves with variational experts; check before reporting.
+   distractor TAV_shared σ=8: all objectives signal R2 0.03–0.07, distractor ~0.52 (no method removes a shared distractor).

@@ -1,0 +1,66 @@
+toy 0 poe
+toy 0 conformal-clean
+toy 0 conformal-selfgen
+toy 0 jackknife-clean
+toy 0 jackknife-selfgen
+toy 0 gate-drop
+toy 0 pattern-BMA
+toy 0 meta-sigma (no detector)
+toy 0 meta-sigma
+toy 0 meta-sigma + mean
+toy 0 meta-sigma on BMA
+toy 0 meta-sigma on gate
+toy 0 mondrian(poe)
+toy 0 mondrian(BMA)
+toy 0 mondrian(meta-sigma on BMA)
+toy 0 oracle drop
+toy 1 poe
+toy 1 conformal-clean
+toy 1 conformal-selfgen
+toy 1 jackknife-clean
+toy 1 jackknife-selfgen
+toy 1 gate-drop
+toy 1 pattern-BMA
+toy 1 meta-sigma (no detector)
+toy 1 meta-sigma
+toy 1 meta-sigma + mean
+toy 1 meta-sigma on BMA
+toy 1 meta-sigma on gate
+toy 1 mondrian(poe)
+toy 1 mondrian(BMA)
+toy 1 mondrian(meta-sigma on BMA)
+toy 1 oracle drop
+toy 2 poe
+toy 2 conformal-clean
+toy 2 conformal-selfgen
+toy 2 jackknife-clean
+toy 2 jackknife-selfgen
+toy 2 gate-drop
+toy 2 pattern-BMA
+toy 2 meta-sigma (no detector)
+toy 2 meta-sigma
+toy 2 meta-sigma + mean
+toy 2 meta-sigma on BMA
+toy 2 meta-sigma on gate
+toy 2 mondrian(poe)
+toy 2 mondrian(BMA)
+toy 2 mondrian(meta-sigma on BMA)
+toy 2 oracle drop
+                             clean_NLL  clean_Cov  seen_NLL  held_NLL  held_MAE  seen_covgap  held_covgap  held_worstcov  held_TR  held_logTRerr  held_AUROC_sd
+method                                                                                                                                                         
+meta-sigma + mean                1.209      0.901     1.301     1.360     0.732        0.006        0.031          0.734    0.961          0.081          0.702
+meta-sigma on BMA                1.209      0.902     1.299     1.379     0.744        0.006        0.034          0.737    0.948          0.101          0.697
+mondrian(meta-sigma on BMA)      1.209      0.901     1.299     1.380     0.744        0.007        0.033          0.737    0.954          0.100          0.708
+meta-sigma on gate               1.209      0.902     1.300     1.387     0.748        0.006        0.036          0.735    0.945          0.106          0.697
+meta-sigma (no detector)         1.227      0.936     1.386     1.421     0.805        0.034        0.036          0.773    0.873          0.149          0.565
+meta-sigma                       1.210      0.904     1.367     1.430     0.805        0.007        0.037          0.743    0.965          0.111          0.732
+pattern-BMA                      1.212      0.898     1.302     1.442     0.744        0.007        0.035          0.714    0.951          0.086          0.665
+mondrian(BMA)                    1.214      0.902     1.303     1.442     0.744        0.009        0.036          0.716    0.934          0.089          0.629
+gate-drop                        1.213      0.895     1.304     1.570     0.748        0.007        0.042          0.667    0.949          0.099          0.664
+jackknife-selfgen                1.279      0.959     1.465     1.581     0.805        0.064        0.078          0.597    0.833          0.253          0.456
+oracle drop                      1.212      0.901     1.301     1.756     0.732        0.010        0.053          0.524    0.955          0.138          0.633
+mondrian(poe)                    1.214      0.904     1.584     3.613     0.805        0.084        0.136          0.271    1.003          0.413          0.643
+conformal-selfgen                1.297      0.964     1.617     3.972     0.805        0.084        0.143          0.257    0.751          0.429          0.362
+jackknife-clean                  1.212      0.901     2.024     4.955     0.805        0.101        0.163          0.259    0.760          0.402          0.372
+conformal-clean                  1.212      0.902     2.013     6.689     0.805        0.104        0.170          0.196    0.751          0.429          0.362
+poe                              1.212      0.901     2.033     6.714     0.805        0.102        0.169          0.196    0.751          0.429          0.362

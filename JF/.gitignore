@@ -1,0 +1,15 @@
+__pycache__/
+*.egg-info/
+out/
+out_*/
+smoke_out/
+*.npz
+*.pkl
+*.pt
+huang_vjepa/
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.blg

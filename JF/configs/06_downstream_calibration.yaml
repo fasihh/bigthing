@@ -1,0 +1,8 @@
+# 06: downstream decoders and calibration over every condition pooled (deployment-realistic). Reuses 03/04 models.
+seeds: [0, 1, 2]
+objectives: [vjepa, sjepa, none]
+frozen: [concat, moe, attn, poe, monig]
+finetuned: [poe, monig]
+supervised: [poe, monig]
+text_drops: [0.5, 0.9]
+noise_lambdas: [0.5, 1.0]

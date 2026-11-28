@@ -1,0 +1,12 @@
+# 10: Cross-Examined Fusion (CXF) vs comparison fusions on MS-COCO 2017 (image + two captions).
+seeds: [0, 1, 2]
+n_train: 20000
+n_valid: 2500
+objectives: [vjepa, align, none]
+frozen: [poe, moe, attn, monig, rpoe, dapoe]
+finetuned: [poe, monig]
+supervised: [poe, monig]
+auditors: [vjepa, align]          # frozen stage-1 experts that cross-examine the senses
+noise_lambdas: [0.5, 1.0]
+text_drops: [0.5]
+max_len: 50

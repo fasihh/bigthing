@@ -1,0 +1,4 @@
+# 12: detect-and-gate on real MOSEI with frozen PoE models from 03 (vjepa, align) and 07 (vjepa_vt).
+seeds: [0, 1, 2]
+objectives: [vjepa, vjepa_vt, align]
+electra_epochs: 60
