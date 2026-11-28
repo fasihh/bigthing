@@ -1,0 +1,41 @@
+JF 16 · Idea screen (Kaggle CPU, commit 2cdddfb, 3 seeds, frozen models, no retraining)
+Detectors: loo (JF15), parity (ridge prediction of each expert from the others, whitened residual),
+spe (PCA residual share), self (own-belief Gaussian), max (parity or self).
+Actions: temper (precision down-weight, k tuned), widen (variance inflation, a tuned), impute
+(replace with parity prediction), temper+widen. Tuned on valid self-made corruptions; held-out:
+noise 0.5, dead sensor, two noisy inputs.
+
+Held-out NLL gain over PoE (positive = better); clean NLL cost <= 0.003 for all temper/widen rows
+method              coco-align coco-vjepa mosei-align mosei-vjepa mosei-vt   mean
+parity|temper          0.086     -0.002     0.018      -0.000      0.022   0.025
+max|temper             0.083     -0.001     0.017      -0.000      0.023   0.024
+spe|temper             0.054     -0.001     0.016      -0.000      0.014   0.017
+loo|temper (JF15)      0.059      0.000     0.000      -0.000      0.014   0.015
+self|temper            0.021      0.000     0.011      -0.000      0.022   0.011
+*|widen, *|temper+widen: ~0 or negative on held-out (over-widen MOSEI)
+*|impute: good on COCO align (+0.08) but breaks vjepa_vt (-0.14 to -0.30), clean cost up to 0.04
+
+parity|temper vs poe (key rows)
+                 held_NLL      seen_NLL      Cov90         TR            AUROC_sd      AUROC_det(det)
+coco align       1.319->1.233  1.295->1.154  0.841->0.891  0.879->0.968  0.563->0.830  0.916
+mosei align      1.436->1.418  1.437->1.409  0.843->0.851  0.927->0.950  0.513->0.716  0.746
+mosei vjepa_vt   1.453->1.430  1.437->1.433  0.846->0.854  0.946->0.972  0.624->0.709  0.693
+coco vjepa       1.343->1.345  1.357->1.352  unchanged                   0.435->0.510  0.816 (loo 0.704)
+mosei vjepa      1.446->1.447  unchanged                                  0.406->0.414  0.596 (loo 0.390)
+
+Per kind NLL, poe -> parity|temper
+coco align   dead 1.314->1.151  noise 1.221->1.151  noise2 1.491->1.398  swap 1.300->1.156
+mosei align  dead 1.419->1.394  noise 1.378->1.368  noise2 1.555->1.527  swap 1.450->1.414
+mosei vt     dead 1.491->1.432  noise 1.397->1.395  noise2 1.494->1.485  swap 1.455->1.450
+vjepa (both datasets): unchanged on every kind
+
+Reading
+- Learned parity check is the best detector+action: beats JF15's loo everywhere it helps, at no clean
+  cost, and now also helps MOSEI align (loo did nothing there) and the variational-target model.
+- On plain V-JEPA it detects better (COCO 0.70->0.82 parity, 0.84 spe; MOSEI 0.39->0.60) but the
+  fused prediction does not change: the corruptions barely hurt these models' PoE to begin with
+  (dead/noise NLL ~ clean+0.06), so there is little to recover.
+- Widening and imputation are not worth it (over-widening; imputation unstable).
+- Novelty: parity-space residuals come from analytical-redundancy fault diagnosis; cross-modal
+  detect-reject-correct exists (Lee et al. 2020, reconstruction-based). Using a learned parity check on
+  frozen expert latents to temper precision inside a PoE, training-free, is an incremental combination.
