@@ -222,7 +222,7 @@ def t_ci(P, X, ctx):
     return M[r, j], V[r, j], None
 
 
-def t_contam(P, X, ctx, beta=0.05, infl=None):
+def t_contam(P, X, ctx, beta=0.05, infl=None, beta_m=None):
     """Good-and-bad (Box & Tiao) contamination model: exact posterior over which experts are bad.
     Good experts: mu_m ~ N(y, var_m); bad experts: mu_m ~ N(m0, v0 + var_m) (uninformative about y).
     Predictive = mixture over states of PoE(good), moment matched."""
@@ -235,7 +235,10 @@ def t_contam(P, X, ctx, beta=0.05, infl=None):
             pass
         good = [m for m, bb in zip(ms, b) if bb == 0]
         bad = [m for m, bb in zip(ms, b) if bb == 1]
-        lp = np.full(n, np.log(beta) * len(bad) + np.log(1 - beta) * len(good))
+        if beta_m is None:
+            lp = np.full(n, np.log(beta) * len(bad) + np.log(1 - beta) * len(good))
+        else:
+            lp = sum(np.log(beta_m[m]) for m in bad) + sum(np.log(1 - beta_m[m]) for m in good) + np.zeros(n)
         for m in bad:
             vb = v0 + P[m][1] if infl is None else infl * P[m][1]
             lp += norm.logpdf(P[m][0], m0, np.sqrt(vb))
@@ -627,6 +630,81 @@ class AgreeDet(Detector):
         return out
 
 
+class IsoForestDet(Detector):
+    """Isolation forest (Liu et al. 2008) on pooled inputs, per modality."""
+
+    def fit(self, ctx):
+        from sklearn.ensemble import IsolationForest
+        self.f = {m: IsolationForest(n_estimators=200, random_state=ctx.seed).fit(pool(ctx.X_train[m])) for m in ctx.mods}
+        return self
+
+    def score(self, P, X, ctx):
+        return {m: -self.f[m].score_samples(pool(X[m])) for m in P}
+
+
+class GMMDet(Detector):
+    """Gaussian mixture density (5 components) on pooled inputs, per modality."""
+
+    def fit(self, ctx):
+        from sklearn.mixture import GaussianMixture
+        self.f = {}
+        for m in ctx.mods:
+            F = pool(ctx.X_train[m]); mu, sd = F.mean(0), F.std(0) + 1e-6
+            self.f[m] = (GaussianMixture(5, covariance_type='diag', random_state=ctx.seed).fit((F - mu) / sd), mu, sd)
+        return self
+
+    def score(self, P, X, ctx):
+        return {m: -self.f[m][0].score_samples((pool(X[m]) - self.f[m][1]) / self.f[m][2]) for m in P}
+
+
+class TTADet(Detector):
+    """Test-time augmentation: drop 40% of frames K times; spread of the expert's prediction."""
+
+    def __init__(self, K=8):
+        self.K = K
+
+    def score(self, P, X, ctx):
+        rng = np.random.default_rng(0)
+        E = ctx.expert_set('plain')
+        out = {}
+        for m in P:
+            x = X[m]
+            preds = []
+            for _ in range(self.K):
+                keep = rng.random(x.shape[:2]) > 0.4
+                keep[:, 0] = True
+                xx = np.where(keep[:, :, None], x, np.nan)
+                mu_t = np.nanmean(xx, 1, keepdims=True)
+                xx = np.where(keep[:, :, None], x, mu_t)          # fill dropped frames with the clip mean
+                preds.append(E[m].predict(xx.astype(np.float32))[0])
+            out[m] = np.std(preds, 0) / np.sqrt(P[m][1])
+        return out
+
+
+class FisherDet(Detector):
+    """Fisher's method: combine empirical p-values (vs clean calibration clips) of several detectors."""
+
+    def __init__(self, dets):
+        self.dets = dets
+
+    def fit(self, ctx):
+        self.ref = []
+        for d in self.dets:
+            s = d.score(ctx.cal_P, ctx.X_cal, ctx)
+            self.ref.append({m: np.sort(s[m]) for m in s})
+        return self
+
+    def score(self, P, X, ctx):
+        out = {m: 0.0 for m in P}
+        for d, ref in zip(self.dets, self.ref):
+            s = d.score(P, X, ctx)
+            for m in P:
+                n = len(ref[m])
+                p = (n - np.searchsorted(ref[m], s[m], side='left') + 1) / (n + 1)
+                out[m] = out[m] - 2 * np.log(p)
+        return out
+
+
 class ContamSuspDet(Detector):
     """Posterior P(bad) from the contamination model, used as a detector."""
 
@@ -646,6 +724,24 @@ class SumDet(Detector):
     def score(self, P, X, ctx):
         outs = [d.score(P, X, ctx) for d in self.dets]
         return {m: sum(o[m] / d.thr[m] for o, d in zip(outs, self.dets)) for m in P}
+
+
+class DetContam:
+    """Contamination BMA whose per-modality prior P(bad) comes from a detector's calibrated score:
+    input evidence (detector) x prediction evidence (do the experts disagree?)."""
+
+    def __init__(self, det, floor=0.01):
+        self.det, self.floor = det, floor
+
+    def __call__(self, P, X, ctx):
+        if len(P) < 2:
+            return (*poe(P, ctx.prior), None)
+        s = self.det.score(P, X, ctx)
+        beta = {}
+        for m in P:
+            r = s[m] / self.det.thr[m]
+            beta[m] = np.clip(1 - np.exp(-np.maximum(r, 0) ** 2), self.floor, 1 - self.floor)
+        return t_contam(P, X, ctx, beta_m=beta)
 
 
 # ----------------------------------------------------------------------------- detector -> fusion

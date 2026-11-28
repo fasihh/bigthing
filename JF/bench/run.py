@@ -101,6 +101,7 @@ def build(name, ctx):
         'predconsist': TQ.PredConsistDet, 'electra': TQ.ElectraDet, 'oneclass_noise': TQ.OneClassNoiseDet,
         'contam_det': TQ.ContamSuspDet, 'agree': TQ.AgreeDet,
         'electra_hard': lambda: TQ.ElectraDet(hard=True),
+        'isoforest': TQ.IsoForestDet, 'gmm': TQ.GMMDet, 'tta': TQ.TTADet,
     }
     base, _, mode = name.partition('@')
     mode = mode or 'drop'
@@ -116,6 +117,15 @@ def build(name, ctx):
         return gate(TQ.DDUDet('sn'), mode, kind='sn')
     if base in dets:
         return gate(dets[base](), mode, kind=kind)
+    if base.startswith('fisher:'):
+        parts = base[7:].split('+')
+        ctx.cal_P = ctx.beliefs(kind, ctx.X_cal)
+        ds = [dets[p]().fit(ctx).calibrate(ctx, q) for p in parts]
+        return gate(TQ.FisherDet(ds), mode, kind=kind)
+    if base.startswith('contam='):
+        ctx.cal_P = ctx.beliefs(kind, ctx.X_cal)
+        d = dets[base[7:]]().fit(ctx).calibrate(ctx, q)
+        return kind, TQ.DetContam(d)
     if base.startswith('combo:'):
         parts = base[6:].split('+')
         ctx.cal_P = ctx.beliefs(kind, ctx.X_cal)
