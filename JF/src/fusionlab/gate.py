@@ -107,13 +107,16 @@ def pooled(x, mk):
 
 
 @torch.no_grad()
-def run_condition(model, split, cond, perms, feat_mean, seed=123):
-    """Corrupted inputs -> pooled stats, expert beliefs, and fused outputs for every availability pattern."""
+def run_condition(model, split, cond, perms, feat_mean, seed=123, singles=False):
+    """Corrupted inputs -> pooled stats, expert beliefs, and fused outputs for every availability pattern
+    (full, drop-one; with singles=True also each modality alone)."""
     experts, fusion, head = model['experts'], model['fusion'], model['head']
     g = torch.Generator(device=RT.DEV).manual_seed(seed + zlib.crc32(cond['name'].encode()) % 10_000)
     n = RT.N_SPLIT[split]
     M = len(BASE)
     pats = [tuple(1.0 for _ in BASE)] + [tuple(0.0 if j == k else 1.0 for j in range(M)) for k in range(M)]
+    if singles:
+        pats += [tuple(1.0 if j == k else 0.0 for j in range(M)) for k in range(M)]
     out = dict(F={m: [] for m in BASE}, mu={m: [] for m in BASE}, lv={m: [] for m in BASE},
                fm={p: [] for p in pats}, fv={p: [] for p in pats})
     for i in range(0, n, 1024):
