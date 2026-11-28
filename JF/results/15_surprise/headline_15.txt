@@ -1,0 +1,49 @@
+JF 15 · Surprise-tempered PoE pilot (Kaggle, CPU, commit 9228595, 3 seeds, frozen models, no retraining)
+
+Method: each expert's latent belief is compared with the leave-one-out PoE of the other experts.
+Precision is scaled by (z/c)^-k above the clean-train 99th percentile c. Temperature on clean valid;
+k tuned on valid with self-made corruptions (noise lambda=1, random swap). Held-out at test: noise
+lambda=0.5, dead sensor, two noisy inputs.
+
+Summary (corrupted columns averaged over all corruption conditions; TR = tracking ratio, 1 = ideal)
+
+                             clean_NLL  clean_MAE  seen_NLL  held_NLL  corr_MAE  corr_Cov90     TR  AUROC_sd  AUROC_surprise  loc_acc
+coco    align     poe            1.139      0.603     1.295     1.319     0.700       0.841  0.879     0.563           0.910    0.847
+                  stp-tuned      1.138      0.602     1.200     1.260     0.679       0.891  0.950     0.840           0.910    0.847
+        vjepa     poe            1.273      0.709     1.357     1.343     0.766       0.877  0.932     0.435           0.704    0.661
+                  stp-tuned      1.272      0.709     1.352     1.343     0.765       0.878  0.935     0.464           0.704    0.661
+mosei   align     poe            1.318      0.700     1.437     1.436     0.762       0.843  0.927     0.513           0.576    0.498
+                  stp-tuned      1.321      0.701     1.415     1.435     0.759       0.847  0.938     0.596           0.576    0.498
+        vjepa     poe            1.367      0.729     1.467     1.446     0.777       0.839  0.945     0.406           0.390    0.595
+                  stp-tuned      1.367      0.730     1.467     1.447     0.777       0.839  0.945     0.406           0.390    0.595
+        vjepa_vt  poe            1.363      0.725     1.437     1.453     0.777       0.846  0.946     0.624           0.499    0.387
+                  stp-tuned      1.363      0.724     1.438     1.439     0.771       0.849  0.954     0.650           0.499    0.387
+
+Fixed k (COCO align): k0.5 held 1.304, k1 1.290, k2 1.269, k4 1.260. Tuned k*: COCO 4 on all seeds;
+MOSEI vjepa 0.5/4/0.5, vjepa_vt 1/1/2, align 2/2/2.
+
+Per corruption kind, NLL (poe -> stp-tuned)
+coco  align    dead 1.314->1.202  noise 1.221->1.175  noise2 1.491->1.425  swap 1.300->1.202
+coco  vjepa    dead 1.330->1.330  noise 1.313->1.312  noise2 1.413->1.413  swap 1.377->1.368
+mosei align    dead 1.419->1.409  noise 1.378->1.380  noise2 1.555->1.563  swap 1.450->1.404
+mosei vjepa    dead 1.440->1.440  noise 1.411->1.411  noise2 1.521->1.521  swap 1.490->1.490
+mosei vjepa_vt dead 1.491->1.449  noise 1.397->1.397  noise2 1.494->1.495  swap 1.455->1.455
+
+Reading
+- Works where the experts share a latent space in which disagreement is meaningful (contrastive
+  "align" experts on COCO): every corruption kind improves, including held-out ones, at zero clean
+  cost. Uncertainty-based detection of corrupted clips 0.56 -> 0.84; Cov90 0.84 -> 0.89; TR 0.88 -> 0.95.
+- With V-JEPA experts it does almost nothing: the surprise score separates corrupted clips only
+  weakly (COCO 0.70, MOSEI 0.39), so the weights barely move. The hypothesis "V-JEPA's own
+  cross-modal predictions give a free surprise signal" is NOT supported in this form.
+- MOSEI: small gains only (align swap 1.450->1.404; vjepa_vt dead 1.491->1.449), because the surprise
+  score is near chance on MOSEI (0.39-0.58).
+
+Novelty check (28 Nov)
+- Down-weighting experts that disagree with the others is known: generalised PoE (Joshi et al. 2022,
+  trained credibility nets), CLoE (arXiv 2603.09316, agreement -> trained gate weights),
+  reliability-weighted PoE (arXiv 2610.29621, learned r_m), and chi^2 innovation gating in sensor
+  fusion (Kalman NIS). Our variant is training-free, uses a leave-one-out PoE in the shared latent,
+  and thresholds from clean data only. That is an incremental, post-hoc variant, not a new idea.
+- The useful finding for Part II is the conditional one: it only helps when the expert latents are
+  aligned (contrastive), not with V-JEPA experts as they stand.
