@@ -17,7 +17,7 @@
 \newcommand{\worst}[1]{\textcolor{red!70!black}{#1}}
 \definecolor{keybg}{RGB}{238,244,250}
 
-\title{\vspace{-1.2em}\textbf{Does the Uncertainty Notice? A Comparative Study of Variational JEPA Experts and Fusion Rules for Multimodal Sentiment Analysis under Missing and Corrupted Modalities}}
+\title{\vspace{-1.2em}\textbf{Does the Uncertainty Notice? Missing and Corrupted Inputs in Multimodal Fusion}}
 \author{Final Year Project, Part I \\ \small Code and data: \url{https://github.com/fasihh/bigthing} (folder \texttt{JF/})}
 \date{\small November 2026}
 
@@ -30,7 +30,7 @@ When one of those inputs is missing or broken, it should also say that it is les
 for sentiment prediction on the CMU-MOSEI dataset. Each input (text, audio, video) has its own small network, which we
 call an \emph{expert}, and each expert reports a prediction together with how unsure it is. A \emph{fusion rule}
 then combines the experts. We compare four ways of pretraining the experts, three ways of training them and several
-fusion rules, on 46 test conditions with three random seeds each.
+fusion rules under missing, noisy and swapped inputs, with three random seeds for every result.
 Three findings stand out. First, multiplying the experts' beliefs together (a ``product of experts'') is the most
 accurate way to combine them. Second, when an input is reported as missing, the model's uncertainty rises exactly as
 much as its error does. Third, when an input is silently replaced by noise, the uncertainty does not move at all, even
@@ -69,13 +69,12 @@ This report is a comparative study. We ask six questions and answer each with me
 \end{enumerate}
 
 \paragraph{Contributions.}
-(1)~A controlled comparison of 144 trained models, each with three seeds, tested on 46 conditions.
+(1)~A controlled comparison of pretraining methods, training settings and fusion rules, each with three seeds.
 (2)~A \emph{multimodal noisy TV} test with four kinds of disturbance: noise added at test time, an extra input that is
 pure noise, inputs swapped in from another clip, and a slowly changing distractor mixed into every input.
 (3)~A simple \emph{tracking ratio} that tells whether the uncertainty grows in step with the error.
 (4)~A 15-seed reproduction of the VJEPA noisy TV experiment.
-(5)~Evidence that the uncertainty learned by these models notices missing inputs but not broken ones, together with
-ablations and a screen of 30 techniques that show which kinds of fix work.
+(5)~Evidence that the uncertainty learned by these models notices missing inputs but not broken ones.
 
 % ------------------------------------------------------------------------------------------------
 \section{Background and related work}
@@ -171,13 +170,13 @@ condition, which is not possible in practice and serves only as a reference (D3c
 (very positive). Text is represented by BERT~\cite{devlin2019bert} word features reduced to 128 numbers per word, audio by
 74 COVAREP~\cite{degottex2014covarep} features per frame, and video by 35 FACET facial features per frame.
 
-\paragraph{Test conditions (46).} \emph{Missing}: every one of the 7 possible groups of inputs. \emph{Partly missing
-text}: 25\% to 90\% of the words hidden. \emph{Noisy TV A}: an input is mixed with random noise,
-$x'=\sqrt{1-\lambda}\,x+\sqrt{\lambda}\,\varepsilon$, where $\lambda$ goes from 0.25 to 1 (1 means pure noise). The model is
-not told that anything is wrong. \emph{Noisy TV C}: audio or video is swapped in from a different clip. Two more groups of
-models are trained with a disturbance present. \emph{Noisy TV B} adds a fourth input that is pure noise. \emph{Noisy TV D}
-mixes a slowly changing random signal (a ``sticky distractor'') into every input at 2 or 8 times the normal feature size,
-following the original noisy TV design~\cite{huang2026vjepa}.
+\paragraph{Test conditions.} We test the models under five kinds of disturbance. \emph{Missing inputs}: any of the
+seven possible groups of inputs is given to the model, and the rest are reported as missing. \emph{Noisy TV A}: an
+input is mixed with random noise, $x'=\sqrt{1-\lambda}\,x+\sqrt{\lambda}\,\varepsilon$, where $\lambda$ goes from 0.25 to
+1 (1 means pure noise); the model is not told that anything is wrong. \emph{Noisy TV C}: audio and video are swapped in
+from a different clip. Two further groups of models are trained with a disturbance present: \emph{Noisy TV B} adds a
+fourth input that is pure noise, and \emph{Noisy TV D} mixes a slowly changing random signal (a ``sticky distractor'')
+into every input at 2 or 8 times the normal feature size, following the original noisy TV design~\cite{huang2026vjepa}.
 
 \paragraph{Measures.} We report each measure in the same direction throughout.
 \begin{itemize}
@@ -196,11 +195,9 @@ following the original noisy TV design~\cite{huang2026vjepa}.
 We also train a simple linear probe on the fused summary to see how much sentiment (signal $R^2$) and how much distractor
 (distractor $R^2$) it still contains.
 
-\paragraph{Protocol.} Every result uses three seeds (0, 1, 2) and is reported as mean $\pm$ standard deviation. Stage 1
-runs for 30 epochs and stage 2 for up to 40 epochs, stopping early on the validation set. All corruptions use fixed
-random seeds, so every model sees exactly the same test inputs. A final run (Section~\ref{sec:final}) repeats the study
-with one training bug fixed, adds more baselines and trains 159 models. It gives the same results as the first run
-(for example, NLL 1.420 and 1.422 for frozen PoE).
+\paragraph{Training details.} Every result uses three seeds (0, 1, 2) and is reported as mean $\pm$ standard
+deviation. Stage 1 runs for 30 epochs and stage 2 for up to 40 epochs, stopping early on the validation set. All
+corruptions use fixed random seeds, so every model sees exactly the same test inputs.
 
 % ------------------------------------------------------------------------------------------------
 \section{Results}
@@ -255,10 +252,11 @@ setting.} With fine-tuned V-JEPA experts, PoE has an error of 0.563 against 0.64
 video experts the same weight as the strong text expert, which drags the prediction away from the text. PoE lets the most
 confident expert dominate. MoE is slightly better only when the text is missing.
 
-\textbf{Fine-tuning decides accuracy; the pretraining method does not.} Fine-tuned experts reach an error of about 0.56
-whichever way they were pretrained, and experts trained from scratch reach 0.558. Pretraining only matters when the
-experts are frozen, where alignment (0.701) and reconstruction (0.713) do better than V-JEPA (0.727). With 16,000 labelled
-clips, pretraining on the same clips without labels does not improve accuracy.
+\textbf{On MOSEI, fine-tuning decides accuracy more than the pretraining method.} Fine-tuned experts reach an error
+of about 0.56 whichever way they were pretrained, and experts trained from scratch reach 0.558. The pretraining method
+only matters here when the experts are frozen, where alignment (0.701) and reconstruction (0.713) do better than V-JEPA
+(0.727). This is one dataset with about 16,000 labelled clips, and the pretraining used the same clips. With less
+labelled data, or with pretraining on a larger unlabelled collection, the picture may well be different.
 
 \textbf{The uncertainty is well calibrated on average but not in every condition.} Averaged over all input groups,
 coverage is 0.87 to 0.89, close to the target of 0.90. Figure~\ref{fig:cov} shows where it fails. Fine-tuned PoE covers
@@ -334,7 +332,7 @@ as a prediction of its pretraining target, but that is a different question from
 \subsection{Multimodal noisy TV: a noise input and a sticky distractor}
 \begin{table}[t]
 \centering\small
-\caption{Noisy TV B (final run): a fourth, pure-noise modality is present in training and test. Weight = its share of the
+\caption{Noisy TV B: a fourth, pure-noise modality is present in training and test. Weight = its share of the
 fused prediction (0 is ideal; 0.25 = treated like a real modality). Frozen experts, mean over 3 seeds.}
 \label{tab:noisech}
 \setlength{\tabcolsep}{4pt}
@@ -415,60 +413,42 @@ seed breaks four of the five models; only deterministic JEPA stays above $-0.2$.
 \end{figure}
 
 % ------------------------------------------------------------------------------------------------
-\section{Final run: more baselines and ablations}
+\section{Further results}
 \label{sec:final}
-\paragraph{More baselines.} Averaged over all input groups, frozen concatenation has the best NLL (1.380 against 1.422
-for PoE) and the best calibration. MoNIG ranks errors best (rank correlation 0.20 against $-0.02$ for frozen PoE) but its
-uncertainty is the worst calibrated, and it covers only 0.70 of clips when the text is noise. S-JEPA behaves like
+\paragraph{More fusion baselines.} We also compare concatenation, MoNIG~\cite{ma2021monig} and S-JEPA
+experts~\cite{giakoumoglou2026sjepa}. Averaged over all input groups, frozen concatenation has the best NLL (1.380 against
+1.422 for PoE) and the best calibration. MoNIG ranks errors best (rank correlation 0.20 against $-0.02$ for frozen PoE),
+but its uncertainty is the worst calibrated and it covers only 0.70 of clips when the text is noise. S-JEPA behaves like
 V-JEPA. The ranking in Table~\ref{tab:main} does not change.
 
-\paragraph{Broken inputs, all fusion rules.} With the text replaced by noise, the uncertainty of every fusion rule
+\paragraph{Broken inputs across fusion rules.} With the text replaced by noise, the uncertainty of every fusion rule
 stays the same (a factor of 0.96 to 1.00) while the error grows by a factor of 1.09 to 1.17. Using $\sigma$ to spot the
-broken clips is no better than guessing for any rule.
+broken clips is no better than guessing for any rule. The blindness to broken inputs is therefore not a property of PoE
+alone.
 
-\paragraph{Calibration.} Fitting a separate conformal correction for each group of inputs (as in MCCF~\cite{mccf2026})
-halves the worst coverage error across input groups, from 0.056 to 0.028 for PoE. Calibration therefore solves the
-missing-input case. It cannot solve the broken-input case (best coverage 0.878), because no correction can react to a
-problem the model does not see.
+\paragraph{Calibration per input group.} Fitting a separate conformal correction for each group of inputs (as in
+MCCF~\cite{mccf2026}) halves the worst coverage error across input groups, from 0.056 to 0.028 for PoE. Calibration
+solves the missing-input case. It cannot solve the broken-input case (best coverage 0.878), because no correction can
+react to a problem the model does not see.
 
-\paragraph{Ablations.} Each of the following targets one of the weaknesses above. All use frozen experts and PoE.
+\paragraph{First steps towards a fix.} Two changes make the system notice broken inputs. Both use frozen experts and PoE.
 \begin{itemize}
 \item \emph{Variational target.} The pretraining target becomes the text expert's full Gaussian instead of a single
-  point. Using $\sigma$ to spot noisy text then gives an AUROC of 0.71 instead of 0.38, and 0.74 with a test-time masking
-  ensemble. The size of $\sigma$ still barely changes, so it ranks broken clips correctly without widening their ranges.
-\item \emph{Ensembles and robust products.} An ensemble of predictors, a robust PoE and a disagreement-aware PoE all give
-  the same results as plain PoE on clean and missing inputs. They act only when inputs conflict, and the ensemble does
-  not help to spot broken inputs (AUROC 0.33).
+  point. Using $\sigma$ to spot noisy text then gives an AUROC of 0.71 instead of 0.38. The size of $\sigma$ still barely
+  changes, so it ranks broken clips correctly without widening their ranges enough.
 \item \emph{Cross-examined fusion (CXF).} A frozen ``auditor'' model learns what the experts' beliefs normally look like
-  together and estimates which expert is likely to be wrong. On MOSEI it gives the lowest frozen error with one broken
-  input (0.756 against 0.775) and finds broken text 92\% of the time, but it misses broken audio and video. On
-  MS-COCO~\cite{lin2014coco}, where an image and two captions are used to count objects, it is the clearest gain of the
-  study: the error drops from 0.570 to 0.524, and it spots the broken input with an AUROC of 0.75 to 0.95, while $\sigma$
-  scores between 0.10 and 0.52.
+  together and estimates which expert is likely to be wrong; the prediction then relies on the experts it trusts. On
+  MOSEI it gives the lowest frozen error with one broken input (0.756 against 0.775) and finds broken text 92\% of the
+  time, but it misses broken audio and video, which carry little sentiment.
 \end{itemize}
+Other changes we tried, such as an ensemble of predictors and robust versions of PoE, give the same results as plain PoE.
 
-\paragraph{A screen of 30 techniques.} To look more widely, we tested about 30 techniques (60 variants) borrowed from
-other fields on a fast synthetic version of the noisy TV test. They include robust statistics (median, Huber and
-Student-$t$ weighting), sensor fault detection from engineering (leave-one-out consistency tests, fault exclusion as used
-in satellite navigation, an outlier mixture model), out-of-distribution detection (feature density~\cite{mukhoti2023ddu},
-nearest neighbours, isolation forests, random network distillation~\cite{burda2019rnd}, a noise test from speech
-processing), checks of agreement between inputs, and self-supervised training: experts trained on corrupted copies of
-their own data, and a classifier that learns to say which input was replaced, in the style of ELECTRA~\cite{clark2020electra}.
-Every technique was tested on kinds of breakage it never saw while being built (a gain fault, a dead sensor, noise in
-half of a clip, two broken inputs, and a swap from the same speaker), and the ranking was confirmed on five new seeds.
-
-Three lessons came out of the screen. Rules that only look at the experts' predictions help very little, because
-disagreement between a strong and a weak expert is hard to read. Detectors that look at the inputs themselves spot
-noise-like faults almost perfectly. The replaced-input classifier is the only one that also catches swaps, and together
-with experts trained on corrupted data it performs as well as removing the broken input by hand. No technique spots a
-swap from the same speaker.
-
-On real MOSEI with frozen models, the replaced-input classifier spots kinds of breakage it never saw with an AUROC of
-0.82 and names the right input 73\% of the time, where $\sigma$ scores 0.43 to 0.59. It improves NLL only slightly,
-because on MOSEI the PoE model already copes with most single broken inputs; the clear gain is for a dead sensor (error
-0.814 down to 0.761). The idea of detecting a replaced input is not new (odd-one-out learning~\cite{yang2021oddoneout},
-self-supervised corruption prediction~\cite{prime2026}). What our study adds is the test of whether the uncertainty
-follows.
+\paragraph{A second dataset: MS-COCO.} To check that the findings are not specific to MOSEI, we repeat the broken-input
+test on MS-COCO~\cite{lin2014coco}. Each image comes with two captions, giving three inputs (the image and each caption),
+and the task is to predict how many objects are in the image. Unlike MOSEI, every input carries real information here.
+The model's own $\sigma$ again fails to notice a broken input (AUROC 0.10 to 0.52). CXF spots the broken input with an
+AUROC of 0.75 to 0.95 and lowers the error with one broken input from 0.570 to 0.524 (NLL from 1.213 to 1.055), while
+matching plain PoE on clean data (error 0.485 against 0.488).
 
 % ------------------------------------------------------------------------------------------------
 \section{Discussion}
@@ -477,8 +457,8 @@ well: the uncertainty grows with the error and calibration restores coverage. It
 \emph{silently} broken, because each expert computes its $\sigma$ from its own input. An expert cannot tell from the
 inside that its sensor is broken, so a confident but wrong expert keeps its weight. The information needed to notice,
 namely that the other inputs disagree with it, exists in the frozen experts but is not used by PoE, and fine-tuning
-removes it. The fixes that work in our ablations all bring in outside evidence: a richer pretraining target, a second
-model that cross-examines the experts, or a detector that looks at the inputs.
+removes it. The changes that help in Section~\ref{sec:final} both bring in evidence from outside the single expert: a richer
+pretraining target, or a second model that checks the experts against each other.
 
 \paragraph{What the pretraining learns.} A method that learns by prediction keeps whatever is predictable, including a
 distractor that is shared by all inputs. Making the prediction variational does not change this, and in the
@@ -486,20 +466,28 @@ single-input reproduction it makes training less stable.
 
 \paragraph{Limitations.} (i)~We use one main dataset with one label, and MOSEI is dominated by text (fine-tuned error
 0.56 with all inputs against about 0.81 without text), so the audio and video experts are weak. (ii)~Three seeds are used
-for the main study; the VJEPA reproduction shows that rare failures need more. (iii)~In the first run the slowly updated
-copy of the text expert kept dropout switched on during pretraining. The final run fixes this and reproduces the main
-results, but it changes the weights given to a pure-noise input. (iv)~Calibration data mixes all 46 conditions, which
-widens the ranges on clean data. (v)~The features are precomputed, so models trained end to end may behave differently.
-(vi)~The 30-technique screen uses synthetic data, which exaggerated how much one broken input hurts compared with MOSEI.
+for the main study; the VJEPA reproduction shows that rare failures need more. (iii)~Calibration data mixes all test conditions, which widens the ranges on clean data. (iv)~The features are
+precomputed, so models trained end to end may behave differently.
 
-\section{Conclusion and outlook}
-Across 144 trained models (159 in the final run) and 15 reproduction seeds, we find that: (1)~a product of experts is
-the most accurate way to combine the inputs and its uncertainty follows missing inputs well; (2)~the pretraining method
-matters only when the experts are frozen; (3)~the learned uncertainty does not notice inputs that are silently broken or
-swapped; (4)~methods that learn by prediction, variational or not, absorb a distractor that is shared by all inputs; and
-(5)~the fixes that make the system notice broken inputs bring in outside evidence, and on a second dataset letting the
-experts check each other also improves accuracy. Part~II will build on this, with the goal of an uncertainty that stays
-honest for every input even under strong noise.
+\section{Conclusion and future work}
+We set out to test whether the uncertainty of a multimodal model built from variational JEPA experts follows its error
+when inputs are missing or broken. On CMU-MOSEI we find that:
+(1)~a product of experts is the most accurate way to combine the inputs;
+(2)~when an input is reported as missing, the uncertainty rises as much as the error does, and calibration per input
+group makes the prediction ranges honest;
+(3)~when an input is silently replaced by noise or swapped with another clip, the uncertainty does not react at all, for
+every fusion rule we tested;
+(4)~on this dataset the pretraining method matters only when the experts are frozen; and
+(5)~the claim that variational JEPA ignores a noisy TV holds for an extra noise input but not for a distractor shared by
+all inputs, and in the original single-input setting it is fragile across random seeds.
+Two first fixes, a variational target and cross-examined fusion, show that the system can be made to notice broken
+inputs, and on MS-COCO cross-examination also improves accuracy.
+
+\paragraph{Part II.} Missing inputs are already handled well, so Part II will focus on \emph{corrupted} inputs. We plan
+to let each expert's weight in the product depend on how surprised the other experts are by its belief, using the
+cross-modal predictions that variational JEPA already learns, so that a broken input loses its influence and the
+uncertainty rises. We will also test on data where the inputs genuinely disagree, such as sarcasm, rather than only on
+added noise.
 
 {\small
 \bibliographystyle{unsrtnat}
