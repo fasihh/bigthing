@@ -1,0 +1,25 @@
+JF 14 uncertainty-tracking lab on real CMU-MOSEI (cache from JF 13; seed 0; Kaggle CPU 2026-11-28)
+Methods learn from self-generated corruptions (noise lam=1, random swap) on valid half A, calibrate on valid half B.
+held = 7 held-out corruption kinds. Lower NLL / covgap better; TR ideal 1; AUROC_sd 0.5 = chance.
+
+model            method                     clean_NLL held_NLL held_MAE held_covgap held_TR AUROC_sd
+vjepa_frozen     poe                        1.394     1.432    0.767    0.046       0.973   0.432
+vjepa_frozen     conformal-selfgen          1.392     1.422    0.767    0.013       0.973   0.432
+vjepa_frozen     mondrian(BMA)              1.405     1.434    0.774    0.017       0.967   0.419
+vjepa_frozen     oracle drop                1.394     1.446    0.777    0.048       0.978   0.687
+vjepa_frozen     meta+mean x5 (toy winner)  1.401     1.484    0.801    0.028       0.951   0.531
+vjepa_frozen     meta-sigma + mean          1.874     1.865    0.851    0.073       0.944   0.549
+vjepa_vt_frozen  poe                        1.386     1.426    0.766    0.043       0.972   0.560
+vjepa_vt_frozen  meta+mean (patterns only)  1.356     1.410    0.769    0.029       0.959   0.498
+vjepa_vt_frozen  mondrian(poe)              1.382     1.418    0.766    0.018       0.980   0.676
+vjepa_vt_frozen  oracle drop                1.386     1.428    0.768    0.032       1.016   0.958
+vjepa_finetuned  poe                        1.118     1.273    0.641    0.046       0.921   0.479
+vjepa_finetuned  mondrian(poe)              1.136     1.246    0.641    0.051       0.953   0.577
+vjepa_finetuned  pattern-BMA                1.167     1.282    0.671    0.034       0.906   0.484
+vjepa_finetuned  oracle drop                1.118     1.310    0.677    0.042       0.936   0.642
+
+Findings: (1) the toy winner (stacked mean+sigma head) overfits on real data (only ~900 clips to learn from) and is
+worse than PoE; (2) the held-out corruptions barely hurt PoE on MOSEI (held NLL 1.43 vs clean 1.39), so there is little
+headroom; even dropping the true culprit does not beat PoE; (3) simple conformal calibration that includes
+self-generated corruptions is the most reliable gain (coverage gap 0.046 -> 0.013), but it is a known technique;
+(4) dead sensor and two noisy inputs are where PoE loses (vjepa_vt dead: PoE 1.495, pattern-BMA 1.430, oracle 1.417).
