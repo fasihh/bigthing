@@ -200,8 +200,12 @@ class JackknifeMix(Jackknife):
     uses_corruptions = True
 
 
-def features(C, split, cond, det, use_det=True):
+def features(C, split, cond, det, use_det=True, feat='all'):
     MU, V = C['MU'][split][cond], C['VAR'][split][cond]
+    if feat == 'det':
+        F = C['F'][split][cond]
+        return np.concatenate([np.log(V[:, :1]), MU[:, :1], np.log(det.probs(F) + 1e-6),
+                               np.log1p(det.density(F))], 1).astype(np.float32)
     cols = [np.log(V), MU[:, :1] - MU[:, 1:], MU[:, :1]]
     if use_det:
         F = C['F'][split][cond]
@@ -216,9 +220,11 @@ class MetaSigma(Method):
     name = 'meta-sigma'
     uses_corruptions = True
 
-    def __init__(self, det=None, base='full', use_det=True, predict_mean=False, epochs=40, **kw):
+    def __init__(self, det=None, base='full', use_det=True, predict_mean=False, epochs=40, train_conds=SELF,
+                 feat='all', n_ens=1, **kw):
         super().__init__(det, **kw)
         self.base, self.use_det, self.pm, self.epochs = base, use_det, predict_mean, epochs
+        self.tc, self.feat, self.n_ens = train_conds, feat, n_ens
 
     def base_mu(self, C, split, cond):
         if self.base == 'bma':
@@ -228,34 +234,39 @@ class MetaSigma(Method):
         return C['MU'][split][cond][:, 0]
 
     def fit(self, C):
-        Xs = np.concatenate([features(C, 'train', c, self.det, self.use_det) for c in SELF])
-        mu0 = np.concatenate([self.base_mu(C, 'train', c) for c in SELF])
-        y = ys(C, 'train', SELF)
+        Xs = np.concatenate([features(C, 'train', c, self.det, self.use_det, self.feat) for c in self.tc])
+        mu0 = np.concatenate([self.base_mu(C, 'train', c) for c in self.tc])
+        y = ys(C, 'train', self.tc)
         self.m, self.sd = Xs.mean(0), Xs.std(0) + 1e-6
-        torch.manual_seed(0)
-        self.net = MLP(Xs.shape[1], 2, h=64)
-        opt = torch.optim.Adam(self.net.parameters(), lr=1e-3, weight_decay=1e-4)
         X = torch.from_numpy((Xs - self.m) / self.sd); R = torch.from_numpy((y - mu0).astype(np.float32))
-        g = torch.Generator().manual_seed(0)
-        for ep in range(self.epochs):
-            for idx in torch.randperm(len(X), generator=g).split(512):
-                o = self.net(X[idx])
-                d = o[:, 0] if self.pm else 0
-                lv = o[:, 1].clamp(-6, 4)
-                loss = 0.5 * (lv + (R[idx] - d) ** 2 / lv.exp()).mean()
-                opt.zero_grad(); loss.backward(); opt.step()
-        self.net.eval()
+        self.nets = []
+        for k in range(self.n_ens):
+            torch.manual_seed(k)
+            net = MLP(Xs.shape[1], 2, h=64)
+            opt = torch.optim.Adam(net.parameters(), lr=1e-3, weight_decay=1e-4)
+            g = torch.Generator().manual_seed(k)
+            for ep in range(self.epochs):
+                for idx in torch.randperm(len(X), generator=g).split(512):
+                    o = net(X[idx])
+                    d = o[:, 0] if self.pm else 0
+                    lv = o[:, 1].clamp(-6, 4)
+                    loss = 0.5 * (lv + (R[idx] - d) ** 2 / lv.exp()).mean()
+                    opt.zero_grad(); loss.backward(); opt.step()
+            self.nets.append(net.eval())
         mu = np.concatenate([self._raw(C, 'valid', c)[0] for c in SELF])
         v = np.concatenate([self._raw(C, 'valid', c)[1] for c in SELF])
         self.s = fit_temp(ys(C, 'valid', SELF), mu, v)
         return self
 
     def _raw(self, C, split, cond):
-        X = features(C, split, cond, self.det, self.use_det)
+        X = torch.from_numpy((features(C, split, cond, self.det, self.use_det, self.feat) - self.m) / self.sd)
         with torch.no_grad():
-            o = self.net(torch.from_numpy((X - self.m) / self.sd)).numpy()
-        mu = self.base_mu(C, split, cond) + (o[:, 0] if self.pm else 0)
-        return mu, np.exp(np.clip(o[:, 1], -6, 4))
+            O = np.stack([n(X).numpy() for n in self.nets])
+        base = self.base_mu(C, split, cond)
+        mus = base[None] + (O[:, :, 0] if self.pm else 0)
+        vs = np.exp(np.clip(O[:, :, 1], -6, 4))
+        mu = mus.mean(0)
+        return mu, vs.mean(0) + mus.var(0)
 
     def predict(self, C, split, cond):
         mu, v = self._raw(C, split, cond)
@@ -302,3 +313,47 @@ class OracleDrop(Method):
             j = 1 + MODS.index(m)
             return MU[:, j], V[:, j]
         return MU[:, 0], V[:, 0]
+
+
+class CQR(Method):
+    """Conformalized quantile regression (Romano et al. 2019) on the meta features, trained with self-generated
+    corruptions: two quantile heads (5%, 95%) plus a median, conformalised on valid. Gaussian sd = half-width / z."""
+    name = 'CQR'
+    uses_corruptions = True
+
+    def fit(self, C, epochs=40):
+        Xs = np.concatenate([features(C, 'train', c, self.det) for c in SELF])
+        y = ys(C, 'train', SELF)
+        self.m, self.sd = Xs.mean(0), Xs.std(0) + 1e-6
+        torch.manual_seed(0)
+        self.net = MLP(Xs.shape[1], 3, h=64)
+        opt = torch.optim.Adam(self.net.parameters(), lr=1e-3, weight_decay=1e-4)
+        X = torch.from_numpy((Xs - self.m) / self.sd); Y = torch.from_numpy(y.astype(np.float32))
+        qs = torch.tensor([0.05, 0.5, 0.95])
+        g = torch.Generator().manual_seed(0)
+        for ep in range(epochs):
+            for idx in torch.randperm(len(X), generator=g).split(512):
+                e = Y[idx, None] - self.net(X[idx])
+                loss = torch.maximum(qs * e, (qs - 1) * e).mean()
+                opt.zero_grad(); loss.backward(); opt.step()
+        self.net.eval()
+        lo, md, hi = self._q(C, 'valid')
+        yv = ys(C, 'valid', SELF)
+        sc = np.maximum(lo - yv, yv - hi)
+        n = len(sc)
+        self.c = np.sort(sc)[min(n - 1, int(np.ceil((n + 1) * 0.9)) - 1)]
+        return self
+
+    def _q(self, C, split, cond=None):
+        conds = SELF if cond is None else (cond,)
+        X = np.concatenate([features(C, split, c, self.det) for c in conds])
+        with torch.no_grad():
+            o = self.net(torch.from_numpy((X - self.m) / self.sd)).numpy()
+        o = np.sort(o, 1)
+        return o[:, 0], o[:, 1], o[:, 2]
+
+    def predict(self, C, split, cond):
+        lo, md, hi = self._q(C, split, cond)
+        hw = np.maximum((hi - lo) / 2 + self.c, 1e-3)
+        mu = (lo + hi) / 2
+        return mu, (hw / Z90) ** 2

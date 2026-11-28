@@ -1,0 +1,46 @@
+toy 0 poe
+toy 0 pattern-BMA
+toy 0 meta-sigma + mean
+toy 0 oracle drop
+toy 0 meta+mean (patterns only)
+toy 0 meta+mean (detector only)
+toy 0 meta+mean (clean-only training)
+toy 0 meta+mean (noise-only training)
+toy 0 meta+mean x5 ensemble
+toy 0 meta+mean on BMA
+toy 0 CQR
+toy 1 poe
+toy 1 pattern-BMA
+toy 1 meta-sigma + mean
+toy 1 oracle drop
+toy 1 meta+mean (patterns only)
+toy 1 meta+mean (detector only)
+toy 1 meta+mean (clean-only training)
+toy 1 meta+mean (noise-only training)
+toy 1 meta+mean x5 ensemble
+toy 1 meta+mean on BMA
+toy 1 CQR
+toy 2 poe
+toy 2 pattern-BMA
+toy 2 meta-sigma + mean
+toy 2 oracle drop
+toy 2 meta+mean (patterns only)
+toy 2 meta+mean (detector only)
+toy 2 meta+mean (clean-only training)
+toy 2 meta+mean (noise-only training)
+toy 2 meta+mean x5 ensemble
+toy 2 meta+mean on BMA
+toy 2 CQR
+                                 clean_NLL  clean_Cov  seen_NLL  held_NLL  held_MAE  seen_covgap  held_covgap  held_worstcov  held_TR  held_logTRerr  held_AUROC_sd
+method                                                                                                                                                             
+meta+mean x5 ensemble                1.207      0.903     1.300     1.355     0.730        0.007        0.028          0.730    0.967          0.081          0.700
+meta-sigma + mean                    1.209      0.901     1.301     1.360     0.732        0.006        0.031          0.734    0.961          0.081          0.702
+CQR                                  1.212      0.903     1.306     1.376     0.740        0.008        0.036          0.740    1.002          0.122          0.729
+meta+mean (patterns only)            1.233      0.932     1.351     1.387     0.753        0.027        0.041          0.747    0.871          0.149          0.482
+meta+mean (noise-only training)      1.209      0.911     1.332     1.397     0.730        0.022        0.030          0.735    0.948          0.079          0.667
+meta+mean on BMA                     1.206      0.900     1.298     1.402     0.753        0.007        0.039          0.724    0.929          0.106          0.693
+pattern-BMA                          1.212      0.898     1.302     1.442     0.744        0.007        0.035          0.714    0.951          0.086          0.665
+meta+mean (detector only)            1.208      0.903     1.336     1.468     0.788        0.008        0.051          0.638    0.934          0.133          0.752
+oracle drop                          1.212      0.901     1.301     1.756     0.732        0.010        0.053          0.524    0.955          0.138          0.633
+meta+mean (clean-only training)      5.663      1.000     4.021     4.353     9.078        0.088        0.132          0.608    0.162          3.753          0.100
+poe                                  1.212      0.901     2.033     6.714     0.805        0.102        0.169          0.196    0.751          0.429          0.362

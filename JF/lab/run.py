@@ -36,6 +36,14 @@ def registry(det):
         'mondrian(BMA)': lambda: M.MondrianDet(det, inner=M.PatternBMA(det)),
         'mondrian(meta-sigma on BMA)': lambda: M.MondrianDet(det, inner=M.MetaSigma(det, base='bma')),
         'oracle drop': lambda: M.OracleDrop(det),
+        'meta+mean (patterns only)': lambda: M.MetaSigma(det, use_det=False, predict_mean=True),
+        'meta+mean (detector only)': lambda: M.MetaSigma(det, predict_mean=True, feat='det'),
+        'meta+mean (clean-only training)': lambda: M.MetaSigma(det, predict_mean=True, train_conds=('clean',)),
+        'meta+mean (noise-only training)': lambda: M.MetaSigma(det, predict_mean=True,
+                                                               train_conds=('clean',) + tuple(f'noise[{m}]' for m in M.MODS)),
+        'meta+mean x5 ensemble': lambda: M.MetaSigma(det, predict_mean=True, n_ens=5),
+        'meta+mean on BMA': lambda: M.MetaSigma(det, base='bma', predict_mean=True),
+        'CQR': lambda: M.CQR(det),
     }
 
 
