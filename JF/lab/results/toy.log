@@ -1,0 +1,23 @@
+toy 0 poe
+toy 0 conformal-clean
+toy 0 conformal-selfgen
+toy 0 jackknife-clean
+toy 0 jackknife-selfgen
+toy 0 gate-drop
+toy 0 pattern-BMA
+toy 0 meta-sigma (no detector)
+toy 0 meta-sigma
+toy 0 meta-sigma + mean
+toy 0 meta-sigma on BMA
+toy 0 meta-sigma on gate
+toy 0 mondrian(poe)
+toy 0 mondrian(BMA)
+toy 0 mondrian(meta-sigma on BMA)
+toy 0 oracle drop
+toy 1 poe
+toy 1 conformal-clean
+toy 1 conformal-selfgen
+toy 1 jackknife-clean
+toy 1 jackknife-selfgen
+toy 1 gate-drop
+toy 1 pattern-BMA
